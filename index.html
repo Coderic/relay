@@ -1,80 +1,28 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Pasarela de Comunicación by neftaliyagua</title>
+<html lang="es" dir="ltr" class="plugin-pages plugin-id-default" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.9.2">
+<title data-rh="true">Gateway de Comunicación | Pasarela</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://neftaliyagua.github.io/Pasarela/img/pasarela-social.png"><meta data-rh="true" name="twitter:image" content="https://neftaliyagua.github.io/Pasarela/img/pasarela-social.png"><meta data-rh="true" property="og:url" content="https://neftaliyagua.github.io/Pasarela/"><meta data-rh="true" property="og:locale" content="es"><meta data-rh="true" name="docusaurus_locale" content="es"><meta data-rh="true" name="docusaurus_tag" content="default"><meta data-rh="true" name="docsearch:language" content="es"><meta data-rh="true" name="docsearch:docusaurus_tag" content="default"><meta data-rh="true" property="og:title" content="Gateway de Comunicación | Pasarela"><meta data-rh="true" name="description" content="Pasarela - Gateway de comunicación en tiempo real con Socket.io, Redis y Kafka"><meta data-rh="true" property="og:description" content="Pasarela - Gateway de comunicación en tiempo real con Socket.io, Redis y Kafka"><link data-rh="true" rel="icon" href="/Pasarela/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://neftaliyagua.github.io/Pasarela/"><link data-rh="true" rel="alternate" href="https://neftaliyagua.github.io/Pasarela/" hreflang="es"><link data-rh="true" rel="alternate" href="https://neftaliyagua.github.io/Pasarela/" hreflang="x-default"><script data-rh="true">function insertBanner(){var n=document.createElement("div");n.id="__docusaurus-base-url-issue-banner-container";n.innerHTML='\n<div id="__docusaurus-base-url-issue-banner" style="border: thick solid red; background-color: rgb(255, 230, 179); margin: 20px; padding: 20px; font-size: 20px;">\n   <p style="font-weight: bold; font-size: 30px;">Your Docusaurus site did not load properly.</p>\n   <p>A very common reason is a wrong site <a href="https://docusaurus.io/docs/docusaurus.config.js/#baseUrl" style="font-weight: bold;">baseUrl configuration</a>.</p>\n   <p>Current configured baseUrl = <span style="font-weight: bold; color: red;">/Pasarela/</span> </p>\n   <p>We suggest trying baseUrl = <span id="__docusaurus-base-url-issue-banner-suggestion-container" style="font-weight: bold; color: green;"></span></p>\n</div>\n',document.body.prepend(n);var e=document.getElementById("__docusaurus-base-url-issue-banner-suggestion-container"),s=window.location.pathname,o="/"===s.substr(-1)?s:s+"/";e.innerHTML=o}document.addEventListener("DOMContentLoaded",function(){void 0===window.docusaurus&&insertBanner()})</script><link rel="stylesheet" href="/Pasarela/assets/css/styles.63220228.css">
+<script src="/Pasarela/assets/js/runtime~main.84b61662.js" defer="defer"></script>
+<script src="/Pasarela/assets/js/main.eaa8451c.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><link rel="preload" as="image" href="/Pasarela/img/logo.svg"><div role="region" aria-label="Saltar al contenido principal"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Saltar al contenido principal</a></div><nav aria-label="Principal" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Alternar barra lateral" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/Pasarela/"><div class="navbar__logo"><img src="/Pasarela/img/logo.svg" alt="Pasarela Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/Pasarela/img/logo.svg" alt="Pasarela Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Pasarela</b></a><a class="navbar__item navbar__link" href="/Pasarela/docs/intro">Documentación</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/NeftaliYagua/Pasarela" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Cambiar entre modo oscuro y claro (actualmente system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><header class="hero hero--primary heroBanner_qdFl"><div class="container"><h1 class="hero__title">⚡ <!-- -->Pasarela</h1><p class="hero__subtitle">Gateway de comunicación en tiempo real</p><div class="buttons_AeoN"><a class="button button--secondary button--lg" href="/Pasarela/docs/intro">Documentación →</a></div></div></header><main><section class="features_cAfv"><div class="container"><div class="row"><div class="col col--4"><div class="text--center padding-horiz--md"><div style="font-size:3rem;margin-bottom:1rem">🔒</div><h3>Inmutable</h3><p>El gateway no se modifica para cada proyecto. Los clientes se conectan y definen su propia lógica.</p></div></div><div class="col col--4"><div class="text--center padding-horiz--md"><div style="font-size:3rem;margin-bottom:1rem">🎯</div><h3>Agnóstico</h3><p>El identificador puede ser cualquier cosa: nickname, UID, deviceId, sessionId...</p></div></div><div class="col col--4"><div class="text--center padding-horiz--md"><div style="font-size:3rem;margin-bottom:1rem">⚡</div><h3>Simple</h3><p>Solo 3 eventos: identificar, notificar, pasarela. Destinos: yo, ustedes, nosotros.</p></div></div></div><div class="row" style="margin-top:2rem"><div class="col col--4"><div class="text--center padding-horiz--md"><div style="font-size:3rem;margin-bottom:1rem">📈</div><h3>Escalable</h3><p>Múltiples instancias con Redis Adapter. HAProxy como balanceador.</p></div></div><div class="col col--4"><div class="text--center padding-horiz--md"><div style="font-size:3rem;margin-bottom:1rem">📊</div><h3>Observable</h3><p>Métricas Prometheus, dashboards Grafana, Kafka para eventos asíncronos.</p></div></div><div class="col col--4"><div class="text--center padding-horiz--md"><div style="font-size:3rem;margin-bottom:1rem">🐳</div><h3>Containerizado</h3><p>Docker Compose listo para producción con todo el stack incluido.</p></div></div></div></div></section><section style="padding:2rem 0;background:var(--ifm-background-surface-color)"><div class="container"><div class="row"><div class="col col--6"><h2>Casos de Uso</h2><ul><li>💬 Chat en tiempo real</li><li>🍕 Tracking de pedidos</li><li>🎫 Booking con disponibilidad en vivo</li><li>🎮 Juegos multijugador</li><li>📊 Dashboards colaborativos</li><li>🏠 IoT y domótica</li></ul></div><div class="col col--6"><h2>Ejemplo Rápido</h2><pre style="background:#1e1e1e;padding:1rem;border-radius:8px;color:#d4d4d4">const socket = io(&#x27;http://localhost:5000/pasarela&#x27;);
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+socket.emit(&#x27;identificar&#x27;, &#x27;mi-usuario&#x27;);
 
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <h1>Pasarela de Comunicación</h1>
-        <p>Pasarela de comunicación simple con Node.js y socket.io</p>
-        <p class="view"><a href="https://github.com/neftaliyagua/Pasarela">View the Project on GitHub <small>neftaliyagua/Pasarela</small></a></p>
-        <ul>
-          <li><a href="https://github.com/neftaliyagua/Pasarela/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/neftaliyagua/Pasarela/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/neftaliyagua/Pasarela">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+socket.emit(&#x27;pasarela&#x27;, { 
+  destino: &#x27;nosotros&#x27;,
+  tipo: &#x27;saludo&#x27;,
+  mensaje: &#x27;Hola!&#x27; 
+});
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-    </div>
-    <footer>
-      <p>Project maintained by <a href="https://github.com/neftaliyagua">neftaliyagua</a></p>
-      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
-    </footer>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-              <script type="text/javascript">
-            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-          </script>
-          <script type="text/javascript">
-            try {
-              var pageTracker = _gat._getTracker("UA-628256-10");
-            pageTracker._trackPageview();
-            } catch(err) {}
-          </script>
-
-  </body>
+socket.on(&#x27;pasarela&#x27;, (data) =&gt; {
+  console.log(data);
+});</pre></div></div></div></section></main></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Documentación</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/Pasarela/docs/intro">Introducción</a></li><li class="footer__item"><a class="footer__link-item" href="/Pasarela/docs/api">API</a></li><li class="footer__item"><a class="footer__link-item" href="/Pasarela/docs/ejemplos">Ejemplos</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Comunidad</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/NeftaliYagua/Pasarela" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://github.com/NeftaliYagua/Pasarela/issues" target="_blank" rel="noopener noreferrer" class="footer__link-item">Issues<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Más</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://github.com/NeftaliYagua/Pasarela/releases" target="_blank" rel="noopener noreferrer" class="footer__link-item">Releases<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2025 NeftaliYagua. Built with Docusaurus.</div></div></div></footer></div>
+</body>
 </html>
