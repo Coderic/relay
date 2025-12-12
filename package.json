@@ -1,11 +1,32 @@
 ﻿{
   "name": "pasarela",
-  "version": "0.0.1",
+  "version": "2.0.0",
+  "description": "Pasarela de comunicación con Node.js, Socket.io, Redis y Kafka",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test"
+  },
   "engines": {
-    "node": ">= 0.4.0",
-    "npm": ">= 1.2.0"
+    "node": ">=20.0.0"
   },
   "dependencies": {
-    "socket.io": "x"
+    "socket.io": "^4.8.1",
+    "@socket.io/redis-adapter": "^8.3.0",
+    "ioredis": "^5.4.1",
+    "kafkajs": "^2.2.4",
+    "prom-client": "^15.1.3",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.1"
+  },
+  "author": "NeftaliYagua",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NeftaliYagua/Pasarela"
   }
 }
