@@ -1,0 +1,14 @@
+# Archivos de entorno
+.env
+
+# Datos locales
+data/
+
+# Logs
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
