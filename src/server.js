@@ -94,6 +94,26 @@ async function initKafka() {
   }
 }
 
+import { readFileSync, existsSync } from 'fs';
+import { join, extname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const PUBLIC_DIR = join(__dirname, '..', 'public');
+
+// Tipos MIME
+const MIME_TYPES = {
+  '.html': 'text/html',
+  '.css': 'text/css',
+  '.js': 'application/javascript',
+  '.json': 'application/json',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon'
+};
+
 // ============================================
 // HTTP SERVER
 // ============================================
@@ -116,8 +136,20 @@ const httpServer = createServer((req, res) => {
     return;
   }
   
+  // Servir archivos estáticos
+  let filePath = req.url === '/' ? '/index.html' : req.url;
+  const fullPath = join(PUBLIC_DIR, filePath);
+  
+  if (existsSync(fullPath)) {
+    const ext = extname(fullPath);
+    const mimeType = MIME_TYPES[ext] || 'text/plain';
+    res.setHeader('Content-Type', mimeType + '; charset=utf-8');
+    res.end(readFileSync(fullPath));
+    return;
+  }
+  
   res.statusCode = 404;
-  res.end('Pasarela Gateway');
+  res.end('Not Found');
 });
 
 // ============================================

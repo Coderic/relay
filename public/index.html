@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pasarela v2.0 - Gateway de Comunicación</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="instance" id="instance">Instancia #-</div>
+  
+  <div class="container">
+    <header>
+      <h1>⚡ Pasarela v2.0</h1>
+      <p class="subtitle">Gateway de comunicación en tiempo real</p>
+      <div class="status">
+        <span class="dot" id="dot"></span>
+        <span id="status-text">Conectando...</span>
+      </div>
+    </header>
+
+    <div class="section">
+      <h2>📱 Ejemplos en Vivo</h2>
+      <div class="grid">
+        <a href="http://localhost:8000/chat/" class="card" target="_blank">
+          <div class="icon">💬</div>
+          <h3>Chat en Tiempo Real</h3>
+          <p>Chat multi-usuario con presencia, mensajes instantáneos y sincronización entre pestañas.</p>
+          <span class="url">localhost:8000/chat/</span>
+        </a>
+        <a href="http://localhost:8000/pizza-delivery/" class="card" target="_blank">
+          <div class="icon">🍕</div>
+          <h3>Pizza Delivery</h3>
+          <p>Sistema de pedidos con tracking en tiempo real. Panel cliente y cocina sincronizados.</p>
+          <span class="url">localhost:8000/pizza-delivery/</span>
+        </a>
+        <a href="http://localhost:8000/booking-eventos/" class="card" target="_blank">
+          <div class="icon">🎫</div>
+          <h3>Booking de Eventos</h3>
+          <p>Reserva de boletos con disponibilidad en tiempo real. Ideal para cines, teatros, vuelos.</p>
+          <span class="url">localhost:8000/booking-eventos/</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🔧 Herramientas de Monitoreo</h2>
+      <div class="tools">
+        <a href="http://localhost:3000" class="tool" target="_blank">📊 Grafana <span class="hint">(admin/admin)</span></a>
+        <a href="http://localhost:9090" class="tool" target="_blank">📈 Prometheus</a>
+        <a href="http://localhost:8080" class="tool" target="_blank">📨 Kafka UI</a>
+        <a href="http://localhost:8081" class="tool" target="_blank">🔴 Redis Commander</a>
+        <a href="/health" class="tool" target="_blank">❤️ Health Check</a>
+        <a href="/metrics" class="tool" target="_blank">📉 Métricas</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📡 API de Eventos</h2>
+      <div class="api-info">
+        <h3>Conectar desde cualquier aplicación:</h3>
+        <pre><code>const socket = io('http://localhost:5000/pasarela');
+
+// Identificarse (cualquier ID: nickname, UID, deviceId...)
+socket.emit('identificar', 'mi-usuario', (ok) =&gt; {});
+
+// Enviar mensaje
+socket.emit('pasarela', { 
+  destino: 'nosotros',  // yo | ustedes | nosotros
+  tipo: 'mi-evento',
+  datos: { ... }
+});
+
+// Recibir mensajes
+socket.on('pasarela', (data) =&gt; console.log(data));</code></pre>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Pasarela Gateway • 4 instancias balanceadas • Redis + Kafka</p>
+      <p><a href="https://github.com/NeftaliYagua/Pasarela" target="_blank">GitHub</a></p>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
+

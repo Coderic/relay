@@ -16,6 +16,7 @@ RUN npm install --omit=dev
 
 # Copiar código fuente
 COPY src/ ./src/
+COPY public/ ./public/
 
 # Usuario no-root
 RUN addgroup -g 1001 -S nodejs && \
