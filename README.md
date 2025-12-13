@@ -1,94 +1,188 @@
-# Pasarela v2.0 ⚡
+# Pasarela Gateway 🌉
 
-Pasarela de comunicación en tiempo real modernizada con Node.js, Socket.io, Redis y Kafka.
+Gateway de comunicación en tiempo real con Socket.io, Redis y Kafka.
 
-## Características
+## Instalación
 
-- 🔌 **Socket.io 4.x** - Comunicación bidireccional en tiempo real
-- 🔴 **Redis** - Adaptador para escalabilidad horizontal y almacenamiento de sesiones
-- 📨 **Kafka** - Mensajería distribuida para eventos asíncronos
-- 📊 **Prometheus** - Métricas expuestas para monitoreo
-- 🐳 **Docker** - Contenedor listo para producción
+```bash
+npm install pasarela-gateway
+```
 
-## Endpoints
+## Uso Rápido
+
+### Como servidor standalone
+
+```bash
+# Con npx
+npx pasarela-gateway
+
+# O con variables de entorno
+PORT=5000 REDIS_URL=redis://localhost:6379 npx pasarela-gateway
+```
+
+### Como librería en tu proyecto
+
+```javascript
+import { createPasarela } from 'pasarela-gateway';
+
+const gateway = createPasarela({
+  port: 5000,
+  redis: { url: 'redis://localhost:6379' },
+  kafka: { brokers: ['localhost:9092'] }
+});
+
+// Eventos personalizados
+gateway.on('connection', (socket) => {
+  console.log('Nueva conexión:', socket.id);
+});
+
+gateway.on('message', ({ socket, data }) => {
+  console.log('Mensaje de', socket.data.usuario, ':', data);
+});
+
+await gateway.start();
+```
+
+### Cliente Node.js
+
+```javascript
+import { PasarelaClient } from 'pasarela-gateway';
+
+const client = new PasarelaClient('http://localhost:5000');
+await client.connect();
+
+// Identificarse
+await client.identificar('usuario123');
+
+// Enviar mensajes
+client.enviar({ texto: 'Hola mundo!' }, 'nosotros');
+
+// Escuchar mensajes
+client.on('mensaje', (data) => {
+  console.log('Recibido:', data);
+});
+```
+
+### Cliente navegador
+
+```html
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+const socket = io('http://localhost:5000/pasarela');
+
+socket.on('connect', () => {
+  socket.emit('identificar', 'miUsuario', (ok) => {
+    console.log('Identificado:', ok);
+  });
+});
+
+// Enviar mensaje a todos
+socket.emit('pasarela', { 
+  texto: 'Hola!',
+  destino: 'nosotros' 
+});
+
+// Recibir mensajes
+socket.on('pasarela', (data) => {
+  console.log('Mensaje:', data);
+});
+</script>
+```
+
+## API de Eventos
+
+### Eventos del cliente
+
+| Evento | Descripción | Payload |
+|--------|-------------|---------|
+| `identificar` | Identificar usuario | `(userId, callback)` |
+| `notificar` | Enviar notificación | `{ ...data, destino }` |
+| `pasarela` | Canal genérico | `{ ...data, destino }` |
+
+### Destinos
+
+| Destino | Descripción |
+|---------|-------------|
+| `yo` | Solo al emisor (default) |
+| `ustedes` | A todos menos el emisor |
+| `nosotros` | A todos incluyendo el emisor |
+
+## Configuración
+
+### Variables de entorno
+
+| Variable | Descripción | Default |
+|----------|-------------|---------|
+| `PORT` | Puerto del servidor | `5000` |
+| `REDIS_URL` | URL de Redis | - |
+| `KAFKA_BROKERS` | Brokers Kafka (comma-separated) | - |
+| `INSTANCE_ID` | ID de instancia | `process.pid` |
+
+### Opciones del constructor
+
+```javascript
+const gateway = createPasarela({
+  port: 5000,
+  instanceId: 'gateway-1',
+  namespace: '/pasarela',
+  cors: { origin: '*', methods: ['GET', 'POST'] },
+  metrics: true,
+  redis: {
+    url: 'redis://localhost:6379',
+    options: { /* ioredis options */ }
+  },
+  kafka: {
+    brokers: ['localhost:9092'],
+    topic: 'pasarela-events',
+    options: { /* kafkajs options */ }
+  },
+  httpHandler: (req, res) => { /* custom handler */ }
+});
+```
+
+## Eventos del servidor
+
+```javascript
+gateway.on('ready', ({ port }) => { });
+gateway.on('connection', (socket) => { });
+gateway.on('disconnect', ({ socket, reason }) => { });
+gateway.on('user:identified', ({ usuario, socketId }) => { });
+gateway.on('message', ({ socket, data }) => { });
+gateway.on('notify', ({ socket, data }) => { });
+gateway.on('redis:connected', () => { });
+gateway.on('redis:error', (error) => { });
+gateway.on('kafka:connected', () => { });
+gateway.on('kafka:error', (error) => { });
+```
+
+## Endpoints HTTP
 
 | Endpoint | Descripción |
 |----------|-------------|
-| `GET /` | Página de prueba interactiva |
-| `GET /health` | Health check (JSON) |
-| `GET /metrics` | Métricas para Prometheus |
-| `WS /pasarela` | Namespace Socket.io |
+| `/health` | Health check (JSON) |
+| `/metrics` | Métricas Prometheus |
 
-## Eventos Socket.io
+## Docker
 
-### Cliente → Servidor
-
-| Evento | Payload | Descripción |
-|--------|---------|-------------|
-| `identificar` | `usuario: string` | Identificar usuario |
-| `notificar` | `{destino, titulo, mensaje}` | Enviar notificación |
-| `pasarela` | `{destino, ...data}` | Enviar mensaje |
-
-**Destinos disponibles:**
-- `yo` - Solo al emisor
-- `ustedes` - A todos excepto el emisor
-- `nosotros` - A todos incluyendo el emisor
-
-### Servidor → Cliente
-
-| Evento | Descripción |
-|--------|-------------|
-| `notificar` | Notificación recibida |
-| `pasarela` | Mensaje recibido |
-| `events` | Eventos de Kafka |
-
-## Ejecución
-
-### Con Docker Compose (recomendado)
-
-```bash
-cd infraestructura
-docker compose up -d
+```dockerfile
+FROM node:22-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --omit=dev
+COPY . .
+EXPOSE 5000
+CMD ["node", "src/server.js"]
 ```
 
-Acceder a:
-- **Pasarela**: http://localhost:5000
-- **Kafka UI**: http://localhost:8080
-- **Redis Commander**: http://localhost:8081
-- **Grafana**: http://localhost:3000 (admin/admin)
-- **Prometheus**: http://localhost:9090
+## Ejemplos
 
-### Desarrollo local
+- [Chat en tiempo real](https://github.com/Coderic/pasarela-ejemplo-chat)
+- [Pizza Delivery](https://github.com/Coderic/pasarela-ejemplo-pizza-delivery)
+- [Booking de Eventos](https://github.com/Coderic/pasarela-ejemplo-booking-eventos)
+- [Bus Express](https://github.com/Coderic/pasarela-ejemplo-bus) (React)
+- [SkyBooker](https://github.com/Coderic/pasarela-ejemplo-aerolinea) (Angular)
+- [PasaPay](https://github.com/Coderic/pasarela-ejemplo-pagos) (Vue.js)
 
-```bash
-npm install
-npm run dev
-```
+## Licencia
 
-## Variables de Entorno
-
-| Variable | Default | Descripción |
-|----------|---------|-------------|
-| `PORT` | 5000 | Puerto del servidor |
-| `REDIS_URL` | redis://localhost:6379 | URL de Redis |
-| `KAFKA_BROKERS` | localhost:9092 | Brokers de Kafka |
-
-## Arquitectura
-
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Cliente   │────▶│  Pasarela   │────▶│    Redis    │
-│  (Browser)  │◀────│  (Node.js)  │◀────│  (Adapter)  │
-└─────────────┘     └──────┬──────┘     └─────────────┘
-                           │
-                           ▼
-                    ┌─────────────┐
-                    │    Kafka    │
-                    │  (Events)   │
-                    └─────────────┘
-```
-
-## Autor
-
-**NeftaliYagua** - [GitHub](https://github.com/NeftaliYagua)
-
+MIT © [Coderic](https://github.com/Coderic)
