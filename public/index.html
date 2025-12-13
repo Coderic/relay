@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pasarela Gateway - Monitor en Tiempo Real</title>
+  <link rel="stylesheet" href="monitor.css">
+</head>
+<body>
+  <div class="monitor-container">
+    <!-- Header -->
+    <header class="monitor-header">
+      <div class="header-left">
+        <h1>⚡ Pasarela Gateway Monitor</h1>
+        <div class="instance-badge" id="instance-badge">Instancia: -</div>
+      </div>
+      <div class="header-right">
+        <div class="status-indicator" id="status-indicator">
+          <span class="status-dot"></span>
+          <span id="status-text">Conectando...</span>
+        </div>
+        <div class="stats-bar">
+          <div class="stat-item">
+            <span class="stat-label">Conexiones:</span>
+            <span class="stat-value" id="stat-connections">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Mensajes/min:</span>
+            <span class="stat-value" id="stat-messages">0</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Controls -->
+    <div class="controls-bar">
+      <div class="controls-left">
+        <button class="btn btn-primary" id="btn-clear">🗑️ Limpiar Logs</button>
+        <button class="btn btn-secondary" id="btn-pause">⏸️ Pausar</button>
+        <button class="btn btn-secondary" id="btn-export">📥 Exportar</button>
+      </div>
+      <div class="controls-right">
+        <div class="filter-group">
+          <label>Nivel:</label>
+          <select id="filter-level">
+            <option value="all">Todos</option>
+            <option value="success">Success</option>
+            <option value="info">Info</option>
+            <option value="warn">Warning</option>
+            <option value="error">Error</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Categoría:</label>
+          <select id="filter-category">
+            <option value="all">Todas</option>
+            <option value="connection">Conexiones</option>
+            <option value="message">Mensajes</option>
+            <option value="system">Sistema</option>
+            <option value="redis">Redis</option>
+            <option value="kafka">Kafka</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Buscar:</label>
+          <input type="text" id="filter-search" placeholder="Buscar en logs...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="monitor-content">
+      <!-- Logs Panel -->
+      <div class="logs-panel">
+        <div class="panel-header">
+          <h2>📋 Logs en Tiempo Real</h2>
+          <span class="log-count" id="log-count">0 logs</span>
+        </div>
+        <div class="logs-container" id="logs-container">
+          <div class="log-empty">Esperando logs...</div>
+        </div>
+      </div>
+
+      <!-- Stats Panel -->
+      <div class="stats-panel">
+        <div class="panel-header">
+          <h2>📊 Estadísticas</h2>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+              <div class="stat-title">Conexiones Activas</div>
+              <div class="stat-number" id="stat-active-connections">0</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📨</div>
+            <div class="stat-info">
+              <div class="stat-title">Mensajes Totales</div>
+              <div class="stat-number" id="stat-total-messages">0</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-info">
+              <div class="stat-title">Mensajes/min</div>
+              <div class="stat-number" id="stat-messages-per-min">0</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🔴</div>
+            <div class="stat-info">
+              <div class="stat-title">Redis</div>
+              <div class="stat-status" id="stat-redis">-</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📨</div>
+            <div class="stat-info">
+              <div class="stat-title">Kafka</div>
+              <div class="stat-status" id="stat-kafka">-</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🕐</div>
+            <div class="stat-info">
+              <div class="stat-title">Uptime</div>
+              <div class="stat-number" id="stat-uptime">00:00:00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="monitor-footer">
+      <div class="footer-left">
+        <span>Pasarela Gateway v2.0</span>
+        <span class="separator">•</span>
+        <a href="https://github.com/Coderic/Pasarela" target="_blank">GitHub</a>
+        <span class="separator">•</span>
+        <a href="/health" target="_blank">Health Check</a>
+        <span class="separator">•</span>
+        <a href="/metrics" target="_blank">Métricas</a>
+      </div>
+      <div class="footer-right">
+        <span>Ejemplos: <a href="http://localhost:8000" target="_blank">localhost:8000</a></span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+  <script src="monitor.js"></script>
+</body>
+</html>
