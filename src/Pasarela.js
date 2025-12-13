@@ -54,11 +54,14 @@ export class Pasarela extends EventEmitter {
     this.httpServer = null;
     this.io = null;
     this.namespace = null;
+    this.monitorNamespace = null;
     this.pubClient = null;
     this.subClient = null;
     this.kafkaProducer = null;
     this.metricsConnections = null;
     this.metricsMessages = null;
+    this.logBuffer = []; // Buffer de logs para monitoreo
+    this.maxLogBuffer = 1000; // Máximo de logs en buffer
     
     this._setupMetrics();
   }
@@ -99,6 +102,10 @@ export class Pasarela extends EventEmitter {
       });
       this.subClient = this.pubClient.duplicate();
       
+      this._emitLog('success', 'redis', 'Redis adapter conectado', { 
+        instance: this.options.instanceId 
+      });
+      
       await new Promise((resolve, reject) => {
         this.pubClient.once('connect', resolve);
         this.pubClient.once('error', reject);
@@ -130,6 +137,9 @@ export class Pasarela extends EventEmitter {
       this.kafkaProducer = kafka.producer();
       await this.kafkaProducer.connect();
       
+      this._emitLog('success', 'kafka', 'Kafka producer conectado', { 
+        instance: this.options.instanceId 
+      });
       this.emit('kafka:connected');
       console.log(`[Pasarela ${this.options.instanceId}] Kafka conectado`);
     } catch (error) {
@@ -217,6 +227,63 @@ export class Pasarela extends EventEmitter {
     // Namespace principal
     this.namespace = this.io.of(this.options.namespace);
     this._setupNamespaceHandlers();
+    
+    // Namespace de monitoreo
+    this.monitorNamespace = this.io.of('/monitor');
+    this._setupMonitorNamespace();
+  }
+  
+  /**
+   * Emite un log al namespace de monitoreo
+   * @private
+   */
+  _emitLog(level, category, message, data = {}) {
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      level, // info, warn, error, success
+      category, // connection, message, system, kafka, redis
+      message,
+      instance: this.options.instanceId,
+      data
+    };
+    
+    // Agregar al buffer
+    this.logBuffer.push(logEntry);
+    if (this.logBuffer.length > this.maxLogBuffer) {
+      this.logBuffer.shift(); // Remover el más antiguo
+    }
+    
+    // Emitir a todos los clientes conectados al monitor
+    if (this.monitorNamespace) {
+      this.monitorNamespace.emit('log', logEntry);
+    }
+  }
+  
+  /**
+   * Configura el namespace de monitoreo
+   * @private
+   */
+  _setupMonitorNamespace() {
+    this.monitorNamespace.on('connection', (socket) => {
+      this._emitLog('info', 'system', 'Cliente de monitoreo conectado', { socketId: socket.id });
+      
+      // Enviar logs históricos al nuevo cliente
+      socket.emit('logs:history', this.logBuffer.slice(-100)); // Últimos 100 logs
+      
+      // Enviar estadísticas iniciales
+      socket.emit('stats', this.getStats());
+      
+      socket.on('disconnect', () => {
+        this._emitLog('info', 'system', 'Cliente de monitoreo desconectado', { socketId: socket.id });
+      });
+    });
+    
+    // Emitir estadísticas periódicamente a todos los clientes de monitoreo
+    setInterval(() => {
+      if (this.monitorNamespace) {
+        this.monitorNamespace.emit('stats', this.getStats());
+      }
+    }, 2000); // Cada 2 segundos
   }
   
   /**
@@ -233,6 +300,11 @@ export class Pasarela extends EventEmitter {
         self.metricsConnections.inc({ instance: self.options.instanceId });
       }
       
+      self._emitLog('success', 'connection', 'Nueva conexión', { 
+        socketId: socket.id,
+        instance: self.options.instanceId 
+      });
+      
       self.emit('connection', socket);
       
       // EVENTO: identificar
@@ -241,6 +313,12 @@ export class Pasarela extends EventEmitter {
         console.log(`[Pasarela ${self.options.instanceId}] Usuario: ${usuario} identificado`);
         
         if (typeof fn === 'function') fn(true);
+        
+        self._emitLog('info', 'connection', 'Usuario identificado', { 
+          usuario, 
+          socketId: socket.id,
+          instance: self.options.instanceId 
+        });
         
         self.emit('user:identified', { usuario, socketId: socket.id });
         self.publishToKafka('user_connected', { usuario, socketId: socket.id });
@@ -281,6 +359,15 @@ export class Pasarela extends EventEmitter {
           });
         }
         
+        self._emitLog('info', 'message', 'Mensaje recibido', { 
+          usuario: socket.data.usuario || 'anónimo',
+          socketId: socket.id,
+          destino: data.destino || 'yo',
+          tipo: data.tipo || 'sin-tipo',
+          instance: self.options.instanceId,
+          dataSize: JSON.stringify(data).length
+        });
+        
         self.emit('message', { socket, data });
         
         switch(data.destino) {
@@ -306,6 +393,13 @@ export class Pasarela extends EventEmitter {
           self.metricsConnections.dec({ instance: self.options.instanceId });
         }
         
+        self._emitLog('warn', 'connection', 'Conexión cerrada', { 
+          socketId: socket.id,
+          usuario: socket.data.usuario || 'anónimo',
+          reason,
+          instance: self.options.instanceId 
+        });
+        
         self.emit('disconnect', { socket, reason });
         self.publishToKafka('user_disconnected', { usuario: socket.data.usuario, reason });
       });
@@ -322,9 +416,13 @@ export class Pasarela extends EventEmitter {
     this._setupHttpServer();
     this._setupSocketIO();
     
-    return new Promise((resolve) => {
+      return new Promise((resolve) => {
       this.httpServer.listen(this.options.port, () => {
         console.log(`[Pasarela ${this.options.instanceId}] Escuchando en puerto ${this.options.port}`);
+        this._emitLog('success', 'system', 'Servidor iniciado', { 
+          port: this.options.port,
+          instance: this.options.instanceId 
+        });
         this.emit('ready', { port: this.options.port });
         resolve();
       });
