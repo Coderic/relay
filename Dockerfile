@@ -1,9 +1,9 @@
-# Pasarela v2.0 - Node.js con Socket.io, Redis y Kafka
+# Coderic Relay v2.0 - Real-time messaging infrastructure
 FROM node:22-alpine
 
-LABEL maintainer="NeftaliYagua"
+LABEL maintainer="Coderic"
 LABEL version="2.0.0"
-LABEL description="Pasarela de comunicación con Socket.io, Redis y Kafka"
+LABEL description="Coderic Relay - Real-time messaging infrastructure"
 
 # Directorio de trabajo
 WORKDIR /app
@@ -38,4 +38,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 
 # Iniciar
 CMD ["node", "src/server.js"]
-

@@ -1,4 +1,4 @@
-// Pasarela Frontend
+// Relay Frontend
 (function() {
   const dot = document.getElementById('dot');
   const statusText = document.getElementById('status-text');
@@ -18,8 +18,8 @@
       statusText.textContent = 'Error de conexión';
     });
 
-  // Conectar a Pasarela para mostrar conexiones en tiempo real
-  const socket = io('/pasarela');
+  // Conectar a Relay para mostrar conexiones en tiempo real
+  const socket = io('/relay');
   
   socket.on('connect', () => {
     dot.classList.add('online');

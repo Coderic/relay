@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pasarela Gateway - Monitor en Tiempo Real</title>
+  <title>Relay Gateway - Monitor en Tiempo Real</title>
   <link rel="stylesheet" href="monitor.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
     <!-- Header -->
     <header class="monitor-header">
       <div class="header-left">
-        <h1>⚡ Pasarela Gateway Monitor</h1>
+        <h1>⚡ Relay Gateway Monitor</h1>
         <div class="instance-badge" id="instance-badge">Instancia: -</div>
       </div>
       <div class="header-right">
@@ -123,6 +123,13 @@
             </div>
           </div>
           <div class="stat-card">
+            <div class="stat-icon">🍃</div>
+            <div class="stat-info">
+              <div class="stat-title">MongoDB</div>
+              <div class="stat-status" id="stat-mongo">-</div>
+            </div>
+          </div>
+          <div class="stat-card">
             <div class="stat-icon">🕐</div>
             <div class="stat-info">
               <div class="stat-title">Uptime</div>
@@ -136,9 +143,9 @@
     <!-- Footer -->
     <footer class="monitor-footer">
       <div class="footer-left">
-        <span>Pasarela Gateway v2.0</span>
+        <span>Relay Gateway v2.0</span>
         <span class="separator">•</span>
-        <a href="https://github.com/Coderic/Pasarela" target="_blank">GitHub</a>
+        <a href="https://github.com/Coderic/Relay" target="_blank">GitHub</a>
         <span class="separator">•</span>
         <a href="/health" target="_blank">Health Check</a>
         <span class="separator">•</span>

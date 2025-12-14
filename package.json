@@ -1,7 +1,7 @@
 ﻿{
-  "name": "pasarela-gateway",
+  "name": "@coderic/relay",
   "version": "2.0.0",
-  "description": "Gateway de comunicación en tiempo real con Socket.io, Redis y Kafka",
+  "description": "Coderic Relay - Real-time messaging infrastructure",
   "main": "src/index.js",
   "type": "module",
   "exports": {
@@ -12,11 +12,11 @@
       "import": "./src/client.js"
     },
     "./server": {
-      "import": "./src/Pasarela.js"
+      "import": "./src/Relay.js"
     }
   },
   "bin": {
-    "pasarela": "./src/server.js"
+    "relay": "./src/server.js"
   },
   "files": [
     "src/",
@@ -41,7 +41,8 @@
     "kafka",
     "pubsub",
     "communication",
-    "pasarela"
+    "relay",
+    "coderic"
   ],
   "dependencies": {
     "socket.io": "^4.8.1",
@@ -49,7 +50,8 @@
     "ioredis": "^5.4.1",
     "kafkajs": "^2.2.4",
     "prom-client": "^15.1.3",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "mongodb": "^6.3.0"
   },
   "peerDependencies": {
     "socket.io-client": "^4.8.1"
@@ -62,14 +64,14 @@
   "devDependencies": {
     "socket.io-client": "^4.8.1"
   },
-  "author": "NeftaliYagua",
+  "author": "Coderic",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Coderic/Pasarela"
+    "url": "https://github.com/Coderic/Relay"
   },
   "bugs": {
-    "url": "https://github.com/Coderic/Pasarela/issues"
+    "url": "https://github.com/Coderic/Relay/issues"
   },
-  "homepage": "https://coderic.github.io/Pasarela/"
+  "homepage": "https://relay.coderic.net"
 }

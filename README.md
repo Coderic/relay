@@ -1,11 +1,13 @@
-# Pasarela Gateway 🌉
+# Coderic Relay ⚡
 
-Gateway de comunicación en tiempo real con Socket.io, Redis y Kafka.
+**Real-time messaging infrastructure**
+
+Coderic Relay es un gateway de comunicación en tiempo real con Socket.io, Redis y Kafka.
 
 ## Instalación
 
 ```bash
-npm install pasarela-gateway
+npm install @coderic/relay
 ```
 
 ## Uso Rápido
@@ -14,18 +16,18 @@ npm install pasarela-gateway
 
 ```bash
 # Con npx
-npx pasarela-gateway
+npx @coderic/relay
 
 # O con variables de entorno
-PORT=5000 REDIS_URL=redis://localhost:6379 npx pasarela-gateway
+PORT=5000 REDIS_URL=redis://localhost:6379 npx @coderic/relay
 ```
 
 ### Como librería en tu proyecto
 
 ```javascript
-import { createPasarela } from 'pasarela-gateway';
+import { createRelay } from '@coderic/relay';
 
-const gateway = createPasarela({
+const gateway = createRelay({
   port: 5000,
   redis: { url: 'redis://localhost:6379' },
   kafka: { brokers: ['localhost:9092'] }
@@ -46,9 +48,9 @@ await gateway.start();
 ### Cliente Node.js
 
 ```javascript
-import { PasarelaClient } from 'pasarela-gateway';
+import { RelayClient } from '@coderic/relay';
 
-const client = new PasarelaClient('http://localhost:5000');
+const client = new RelayClient('http://localhost:5000');
 await client.connect();
 
 // Identificarse
@@ -68,7 +70,7 @@ client.on('mensaje', (data) => {
 ```html
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script>
-const socket = io('http://localhost:5000/pasarela');
+const socket = io('http://localhost:5000/relay');
 
 socket.on('connect', () => {
   socket.emit('identificar', 'miUsuario', (ok) => {
@@ -77,13 +79,13 @@ socket.on('connect', () => {
 });
 
 // Enviar mensaje a todos
-socket.emit('pasarela', { 
+socket.emit('relay', { 
   texto: 'Hola!',
   destino: 'nosotros' 
 });
 
 // Recibir mensajes
-socket.on('pasarela', (data) => {
+socket.on('relay', (data) => {
   console.log('Mensaje:', data);
 });
 </script>
@@ -97,7 +99,7 @@ socket.on('pasarela', (data) => {
 |--------|-------------|---------|
 | `identificar` | Identificar usuario | `(userId, callback)` |
 | `notificar` | Enviar notificación | `{ ...data, destino }` |
-| `pasarela` | Canal genérico | `{ ...data, destino }` |
+| `relay` | Canal genérico | `{ ...data, destino }` |
 
 ### Destinos
 
@@ -121,10 +123,10 @@ socket.on('pasarela', (data) => {
 ### Opciones del constructor
 
 ```javascript
-const gateway = createPasarela({
+const gateway = createRelay({
   port: 5000,
   instanceId: 'gateway-1',
-  namespace: '/pasarela',
+  namespace: '/relay',
   cors: { origin: '*', methods: ['GET', 'POST'] },
   metrics: true,
   redis: {
@@ -133,7 +135,7 @@ const gateway = createPasarela({
   },
   kafka: {
     brokers: ['localhost:9092'],
-    topic: 'pasarela-events',
+    topic: 'relay-events',
     options: { /* kafkajs options */ }
   },
   httpHandler: (req, res) => { /* custom handler */ }
@@ -164,24 +166,31 @@ gateway.on('kafka:error', (error) => { });
 
 ## Docker
 
+```bash
+docker pull coderic/relay
+```
+
 ```dockerfile
-FROM node:22-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install --omit=dev
-COPY . .
+FROM coderic/relay:latest
+ENV PORT=5000
+ENV REDIS_URL=redis://redis:6379
+ENV KAFKA_BROKERS=kafka:9092
 EXPOSE 5000
 CMD ["node", "src/server.js"]
 ```
 
 ## Ejemplos
 
-- [Chat en tiempo real](https://github.com/Coderic/pasarela-ejemplo-chat)
-- [Pizza Delivery](https://github.com/Coderic/pasarela-ejemplo-pizza-delivery)
-- [Booking de Eventos](https://github.com/Coderic/pasarela-ejemplo-booking-eventos)
-- [Bus Express](https://github.com/Coderic/pasarela-ejemplo-bus) (React)
-- [SkyBooker](https://github.com/Coderic/pasarela-ejemplo-aerolinea) (Angular)
-- [PasaPay](https://github.com/Coderic/pasarela-ejemplo-pagos) (Vue.js)
+- [Chat en tiempo real](https://github.com/Coderic/relay-ejemplo-chat)
+- [Pizza Delivery](https://github.com/Coderic/relay-ejemplo-pizza-delivery)
+- [Booking de Eventos](https://github.com/Coderic/relay-ejemplo-booking-eventos)
+- [Bus Express](https://github.com/Coderic/relay-ejemplo-bus) (React)
+- [SkyBooker](https://github.com/Coderic/relay-ejemplo-aerolinea) (Angular)
+- [PasaPay](https://github.com/Coderic/relay-ejemplo-pagos) (Vue.js)
+
+## Website
+
+🌐 [relay.coderic.net](https://relay.coderic.net)
 
 ## Licencia
 

@@ -28,8 +28,8 @@ io.configure(function () {
         callback(null, true);
     });
 });
-var pasarela = io
-  .of('/pasarela')
+var relay = io
+  .of('/relay')
   .on('connection', function (socket) {
     console.log("Conectado");
     socket.on('identificar', function (usuario, fn) { 
@@ -46,20 +46,20 @@ var pasarela = io
             socket.broadcast.emit('notificar', data );
           break;
           case "nosotros":
-            pasarela.emit('notificar', data);
+            relay.emit('notificar', data);
           break;
       }
     });
-    socket.on('pasarela', function (data) {
+    socket.on('relay', function (data) {
       switch(data.destino) {
           default: // "yo"
-            socket.emit('pasarela', data);
+            socket.emit('relay', data);
           break;
           case "ustedes":
-            pasarela.broadcast.emit('pasarela', data );
+            relay.broadcast.emit('relay', data );
           break;
           case "nosotros":
-            pasarela.emit('pasarela', data);
+            relay.emit('relay', data);
           break;
       }
     });

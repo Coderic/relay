@@ -1,4 +1,4 @@
-socket = io.connect('http://' + window.location.hostname + ':' + window.location.port + '/pasarela');
+socket = io.connect('http://' + window.location.hostname + ':' + window.location.port + '/relay');
 socket.on('error', function (razon) {
     console.error('No se pudo conectar', razon);
 });

@@ -1,11 +1,11 @@
 /**
- * Pasarela v2.0
- * Gateway de comunicación inmutable - Versión como paquete npm
+ * Coderic Relay v2.0
+ * Real-time messaging infrastructure - Versión como paquete npm
  * 
  * API de eventos:
  * - identificar: Identificar usuario
  * - notificar: Enviar notificaciones  
- * - pasarela: Canal de mensajes genérico
+ * - relay: Canal de mensajes genérico
  * 
  * Destinos:
  * - yo: Solo al emisor
@@ -20,11 +20,12 @@ import { Redis } from 'ioredis';
 import { Kafka } from 'kafkajs';
 import { register, collectDefaultMetrics, Counter, Gauge } from 'prom-client';
 import EventEmitter from 'events';
+import { registerPlugin, getPlugin } from './plugins/index.js';
 
 /**
- * Clase principal del gateway Pasarela
+ * Clase principal del gateway Relay
  */
-export class Pasarela extends EventEmitter {
+export class Relay extends EventEmitter {
   /**
    * @param {Object} options - Opciones de configuración
    * @param {number} [options.port=5000] - Puerto del servidor
@@ -36,6 +37,8 @@ export class Pasarela extends EventEmitter {
    * @param {Object} [options.cors] - Configuración CORS
    * @param {boolean} [options.metrics=true] - Habilitar métricas Prometheus
    * @param {Function} [options.httpHandler] - Handler HTTP personalizado
+   * @param {Object} [options.plugins] - Configuración de plugins opcionales
+   * @param {Object} [options.plugins.mongo] - Configuración del plugin MongoDB
    */
   constructor(options = {}) {
     super();
@@ -45,10 +48,11 @@ export class Pasarela extends EventEmitter {
       instanceId: options.instanceId || process.pid.toString(),
       redis: options.redis || null,
       kafka: options.kafka || null,
+      plugins: options.plugins || {},
       cors: options.cors || { origin: '*', methods: ['GET', 'POST'] },
       metrics: options.metrics !== false,
       httpHandler: options.httpHandler || null,
-      namespace: options.namespace || '/pasarela'
+      namespace: options.namespace || '/relay'
     };
     
     this.httpServer = null;
@@ -76,13 +80,13 @@ export class Pasarela extends EventEmitter {
     collectDefaultMetrics({ register });
     
     this.metricsConnections = new Gauge({
-      name: 'pasarela_connections_total',
+      name: 'relay_connections_total',
       help: 'Conexiones activas',
       labelNames: ['instance']
     });
     
     this.metricsMessages = new Counter({
-      name: 'pasarela_messages_total',
+      name: 'relay_messages_total',
       help: 'Mensajes procesados',
       labelNames: ['type', 'destination', 'instance']
     });
@@ -112,10 +116,10 @@ export class Pasarela extends EventEmitter {
       });
       
       this.emit('redis:connected');
-      console.log(`[Pasarela ${this.options.instanceId}] Redis conectado`);
+      console.log(`[Relay ${this.options.instanceId}] Redis conectado`);
     } catch (error) {
       this.emit('redis:error', error);
-      console.log(`[Pasarela ${this.options.instanceId}] Redis no disponible:`, error.message);
+      console.log(`[Relay ${this.options.instanceId}] Redis no disponible:`, error.message);
     }
   }
   
@@ -128,7 +132,7 @@ export class Pasarela extends EventEmitter {
     
     try {
       const kafka = new Kafka({
-        clientId: `pasarela-${this.options.instanceId}`,
+        clientId: `relay-${this.options.instanceId}`,
         brokers: this.options.kafka.brokers,
         retry: { retries: 3 },
         ...this.options.kafka.options
@@ -141,11 +145,44 @@ export class Pasarela extends EventEmitter {
         instance: this.options.instanceId 
       });
       this.emit('kafka:connected');
-      console.log(`[Pasarela ${this.options.instanceId}] Kafka conectado`);
+      console.log(`[Relay ${this.options.instanceId}] Kafka conectado`);
     } catch (error) {
       this.emit('kafka:error', error);
-      console.log(`[Pasarela ${this.options.instanceId}] Kafka no disponible:`, error.message);
+      console.log(`[Relay ${this.options.instanceId}] Kafka no disponible:`, error.message);
       this.kafkaProducer = null;
+    }
+  }
+  
+  /**
+   * Configura plugins opcionales
+   * @private
+   */
+  async _setupPlugins() {
+    // Plugin MongoDB (opcional)
+    if (this.options.plugins.mongo?.url) {
+      try {
+        const { MongoPlugin } = await import('./plugins/mongo.js');
+        const mongoPlugin = new MongoPlugin(this.options.plugins.mongo);
+        
+        mongoPlugin.on('connected', () => {
+          this._emitLog('success', 'mongo', 'MongoDB plugin conectado', { 
+            instance: this.options.instanceId 
+          });
+          this.emit('plugin:mongo:connected');
+          console.log(`[Relay ${this.options.instanceId}] MongoDB plugin conectado`);
+        });
+        
+        mongoPlugin.on('error', (error) => {
+          this.emit('plugin:mongo:error', error);
+          console.log(`[Relay ${this.options.instanceId}] MongoDB plugin error:`, error.message);
+        });
+        
+        await mongoPlugin.initialize();
+        registerPlugin('mongo', mongoPlugin);
+      } catch (error) {
+        this.emit('plugin:mongo:error', error);
+        console.log(`[Relay ${this.options.instanceId}] MongoDB plugin no disponible:`, error.message);
+      }
     }
   }
   
@@ -159,7 +196,7 @@ export class Pasarela extends EventEmitter {
     
     try {
       await this.kafkaProducer.send({
-        topic: this.options.kafka?.topic || 'pasarela-events',
+        topic: this.options.kafka?.topic || 'relay-events',
         messages: [{
           key: type,
           value: JSON.stringify({ 
@@ -205,7 +242,7 @@ export class Pasarela extends EventEmitter {
       }
       
       res.statusCode = 404;
-      res.end('Pasarela Gateway');
+      res.end('Coderic Relay');
     });
   }
   
@@ -294,7 +331,7 @@ export class Pasarela extends EventEmitter {
     const self = this;
     
     this.namespace.on('connection', function(socket) {
-      console.log(`[Pasarela ${self.options.instanceId}] Conectado:`, socket.id);
+      console.log(`[Relay ${self.options.instanceId}] Conectado:`, socket.id);
       
       if (self.metricsConnections) {
         self.metricsConnections.inc({ instance: self.options.instanceId });
@@ -308,9 +345,9 @@ export class Pasarela extends EventEmitter {
       self.emit('connection', socket);
       
       // EVENTO: identificar
-      socket.on('identificar', function(usuario, fn) {
+      socket.on('identificar', async function(usuario, fn) {
         socket.data.usuario = usuario;
-        console.log(`[Pasarela ${self.options.instanceId}] Usuario: ${usuario} identificado`);
+        console.log(`[Relay ${self.options.instanceId}] Usuario: ${usuario} identificado`);
         
         if (typeof fn === 'function') fn(true);
         
@@ -319,6 +356,17 @@ export class Pasarela extends EventEmitter {
           socketId: socket.id,
           instance: self.options.instanceId 
         });
+        
+        // Persistir conexión en MongoDB (si el plugin está activo)
+        const mongoPlugin = getPlugin('mongo');
+        if (mongoPlugin?.isEnabled()) {
+          await mongoPlugin.saveConnection({
+            socketId: socket.id,
+            usuario,
+            instance: self.options.instanceId,
+            connectedAt: new Date()
+          });
+        }
         
         self.emit('user:identified', { usuario, socketId: socket.id });
         self.publishToKafka('user_connected', { usuario, socketId: socket.id });
@@ -349,11 +397,11 @@ export class Pasarela extends EventEmitter {
         }
       });
       
-      // EVENTO: pasarela (canal genérico)
-      socket.on('pasarela', function(data) {
+      // EVENTO: relay (canal genérico)
+      socket.on('relay', async function(data) {
         if (self.metricsMessages) {
           self.metricsMessages.inc({ 
-            type: 'pasarela', 
+            type: 'relay', 
             destination: data.destino || 'yo',
             instance: self.options.instanceId 
           });
@@ -368,17 +416,30 @@ export class Pasarela extends EventEmitter {
           dataSize: JSON.stringify(data).length
         });
         
+        // Persistir mensaje en MongoDB (si el plugin está activo)
+        const mongoPlugin = getPlugin('mongo');
+        if (mongoPlugin?.isEnabled()) {
+          await mongoPlugin.saveMessage({
+            usuario: socket.data.usuario || 'anónimo',
+            socketId: socket.id,
+            destino: data.destino || 'yo',
+            tipo: data.tipo || 'sin-tipo',
+            data: data,
+            instance: self.options.instanceId
+          });
+        }
+        
         self.emit('message', { socket, data });
         
         switch(data.destino) {
           case 'ustedes':
-            socket.broadcast.emit('pasarela', data);
+            socket.broadcast.emit('relay', data);
             break;
           case 'nosotros':
-            self.namespace.emit('pasarela', data);
+            self.namespace.emit('relay', data);
             break;
           default: // "yo"
-            socket.emit('pasarela', data);
+            socket.emit('relay', data);
             break;
         }
         
@@ -386,8 +447,8 @@ export class Pasarela extends EventEmitter {
       });
       
       // Desconexión
-      socket.on('disconnect', function(reason) {
-        console.log(`[Pasarela ${self.options.instanceId}] Desconectado:`, socket.id, reason);
+      socket.on('disconnect', async function(reason) {
+        console.log(`[Relay ${self.options.instanceId}] Desconectado:`, socket.id, reason);
         
         if (self.metricsConnections) {
           self.metricsConnections.dec({ instance: self.options.instanceId });
@@ -400,6 +461,12 @@ export class Pasarela extends EventEmitter {
           instance: self.options.instanceId 
         });
         
+        // Actualizar desconexión en MongoDB (si el plugin está activo)
+        const mongoPlugin = getPlugin('mongo');
+        if (mongoPlugin?.isEnabled()) {
+          await mongoPlugin.updateConnectionDisconnect(socket.id, reason);
+        }
+        
         self.emit('disconnect', { socket, reason });
         self.publishToKafka('user_disconnected', { usuario: socket.data.usuario, reason });
       });
@@ -407,18 +474,19 @@ export class Pasarela extends EventEmitter {
   }
   
   /**
-   * Inicia el servidor Pasarela
+   * Inicia el servidor Relay
    * @returns {Promise<void>}
    */
   async start() {
     await this._setupRedis();
     await this._setupKafka();
+    await this._setupPlugins();
     this._setupHttpServer();
     this._setupSocketIO();
     
       return new Promise((resolve) => {
       this.httpServer.listen(this.options.port, () => {
-        console.log(`[Pasarela ${this.options.instanceId}] Escuchando en puerto ${this.options.port}`);
+        console.log(`[Relay ${this.options.instanceId}] Escuchando en puerto ${this.options.port}`);
         this._emitLog('success', 'system', 'Servidor iniciado', { 
           port: this.options.port,
           instance: this.options.instanceId 
@@ -434,7 +502,13 @@ export class Pasarela extends EventEmitter {
    * @returns {Promise<void>}
    */
   async stop() {
-    console.log(`[Pasarela ${this.options.instanceId}] Cerrando...`);
+    console.log(`[Relay ${this.options.instanceId}] Cerrando...`);
+    
+    // Cerrar plugins
+    const mongoPlugin = getPlugin('mongo');
+    if (mongoPlugin?.isEnabled()) {
+      await mongoPlugin.shutdown();
+    }
     
     if (this.kafkaProducer) {
       await this.kafkaProducer.disconnect();
@@ -480,23 +554,25 @@ export class Pasarela extends EventEmitter {
    * @returns {Object}
    */
   getStats() {
+    const mongoPlugin = getPlugin('mongo');
     return {
       connections: this.namespace?.sockets.size || 0,
       instance: this.options.instanceId,
       redis: !!this.pubClient,
-      kafka: !!this.kafkaProducer
+      kafka: !!this.kafkaProducer,
+      mongo: mongoPlugin?.isConnected() || false
     };
   }
 }
 
 /**
- * Factory function para crear una instancia de Pasarela
+ * Factory function para crear una instancia de Relay
  * @param {Object} options - Opciones de configuración
- * @returns {Pasarela}
+ * @returns {Relay}
  */
-export function createPasarela(options = {}) {
-  return new Pasarela(options);
+export function createRelay(options = {}) {
+  return new Relay(options);
 }
 
-export default Pasarela;
+export default Relay;
 

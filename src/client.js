@@ -1,10 +1,10 @@
 /**
- * Cliente Pasarela para Node.js
+ * Cliente Relay para Node.js
  * 
  * @example
- * import { PasarelaClient } from 'pasarela-gateway';
+ * import { RelayClient } from '@coderic/relay';
  * 
- * const client = new PasarelaClient('http://localhost:5000');
+ * const client = new RelayClient('http://localhost:5000');
  * await client.connect();
  * 
  * client.identificar('usuario123');
@@ -15,17 +15,17 @@ import { io } from 'socket.io-client';
 import EventEmitter from 'events';
 
 /**
- * Cliente para conectarse a un servidor Pasarela
+ * Cliente para conectarse a un servidor Relay
  */
-export class PasarelaClient extends EventEmitter {
+export class RelayClient extends EventEmitter {
   /**
-   * @param {string} url - URL del servidor Pasarela
+   * @param {string} url - URL del servidor Relay
    * @param {Object} options - Opciones de Socket.io
    */
   constructor(url, options = {}) {
     super();
     
-    this.url = url.endsWith('/pasarela') ? url : `${url}/pasarela`;
+    this.url = url.endsWith('/relay') ? url : `${url}/relay`;
     this.options = {
       transports: ['websocket', 'polling'],
       ...options
@@ -36,7 +36,7 @@ export class PasarelaClient extends EventEmitter {
   }
   
   /**
-   * Conecta al servidor Pasarela
+   * Conecta al servidor Relay
    * @returns {Promise<void>}
    */
   connect() {
@@ -59,13 +59,13 @@ export class PasarelaClient extends EventEmitter {
         this.emit('disconnected', { reason });
       });
       
-      // Eventos de Pasarela
+      // Eventos de Relay
       this.socket.on('notificar', (data) => {
         this.emit('notificar', data);
       });
       
-      this.socket.on('pasarela', (data) => {
-        this.emit('pasarela', data);
+      this.socket.on('relay', (data) => {
+        this.emit('relay', data);
         this.emit('mensaje', data);
       });
     });
@@ -89,12 +89,12 @@ export class PasarelaClient extends EventEmitter {
   }
   
   /**
-   * Envía un mensaje a través del canal pasarela
+   * Envía un mensaje a través del canal relay
    * @param {Object} data - Datos a enviar
    * @param {string} [destino='yo'] - Destino: 'yo', 'ustedes', 'nosotros'
    */
   enviar(data, destino = 'yo') {
-    this.socket.emit('pasarela', { ...data, destino });
+    this.socket.emit('relay', { ...data, destino });
   }
   
   /**
@@ -125,5 +125,4 @@ export class PasarelaClient extends EventEmitter {
   }
 }
 
-export default PasarelaClient;
-
+export default RelayClient;
