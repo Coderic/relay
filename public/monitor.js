@@ -1,6 +1,6 @@
-// Pasarela Gateway Monitor - Cliente en tiempo real
+// Relay Gateway Monitor - Cliente en tiempo real
 
-const PASARELA_URL = window.location.origin;
+const RELAY_URL = window.location.origin;
 let socket = null;
 let logs = [];
 let isPaused = false;
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Conectar a Socket.io
 function initSocket() {
-  socket = io(`${PASARELA_URL}/monitor`, {
+  socket = io(`${RELAY_URL}/monitor`, {
     transports: ['websocket', 'polling']
   });
 
@@ -204,7 +204,7 @@ function initControls() {
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `pasarela-logs-${new Date().toISOString()}.json`;
+    link.download = `relay-logs-${new Date().toISOString()}.json`;
     link.click();
     URL.revokeObjectURL(url);
   });
@@ -254,6 +254,8 @@ function updateStats(stats) {
   document.getElementById('stat-redis').className = `stat-status ${stats.redis ? 'online' : 'offline'}`;
   document.getElementById('stat-kafka').textContent = stats.kafka ? 'Online' : 'Offline';
   document.getElementById('stat-kafka').className = `stat-status ${stats.kafka ? 'online' : 'offline'}`;
+  document.getElementById('stat-mongo').textContent = stats.mongo ? 'Online' : 'Offline';
+  document.getElementById('stat-mongo').className = `stat-status ${stats.mongo ? 'online' : 'offline'}`;
   
   if (stats.instance) {
     document.getElementById('instance-badge').textContent = `Instancia: ${stats.instance}`;
@@ -264,4 +266,6 @@ function updateStats(stats) {
 function updateMessageStats() {
   document.getElementById('stat-messages').textContent = messageCountPerMin;
 }
+
+
 

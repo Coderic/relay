@@ -1,20 +1,22 @@
 #!/usr/bin/env node
 /**
- * Servidor standalone de Pasarela
+ * Servidor standalone de Coderic Relay
  * 
  * Uso:
- *   npx pasarela-gateway
+ *   npx @coderic/relay
  *   node src/server.js
  * 
  * Variables de entorno:
  *   PORT - Puerto del servidor (default: 5000)
  *   REDIS_URL - URL de Redis para clustering
  *   KAFKA_BROKERS - Brokers de Kafka separados por coma
+ *   MONGO_URL - URL de conexión a MongoDB
+ *   MONGO_DB_NAME - Nombre de la base de datos (default: relay)
  *   INSTANCE_ID - ID de instancia
  */
 
 import 'dotenv/config';
-import { createPasarela } from './Pasarela.js';
+import { createRelay } from './Relay.js';
 import { readFileSync, existsSync } from 'fs';
 import { join, extname } from 'path';
 import { fileURLToPath } from 'url';
@@ -60,17 +62,31 @@ const config = {
   kafka: process.env.KAFKA_BROKERS ? { 
     brokers: process.env.KAFKA_BROKERS.split(',') 
   } : null,
+  plugins: {
+    // Plugin MongoDB (opcional)
+    mongo: process.env.MONGO_URL ? {
+      url: process.env.MONGO_URL,
+      dbName: process.env.MONGO_DB_NAME || 'relay',
+      collections: {
+        messages: process.env.MONGO_COLLECTIONS_MESSAGES || 'messages',
+        connections: process.env.MONGO_COLLECTIONS_CONNECTIONS || 'connections',
+        events: process.env.MONGO_COLLECTIONS_EVENTS || 'events',
+        logs: process.env.MONGO_COLLECTIONS_LOGS || 'logs'
+      }
+    } : null
+  },
   httpHandler: existsSync(PUBLIC_DIR) ? staticHandler : null
 };
 
-console.log('Pasarela Gateway v2.0');
+console.log('Coderic Relay v2.0');
 console.log(`Puerto: ${config.port}`);
 console.log(`Instancia: ${config.instanceId}`);
 console.log(`Redis: ${config.redis ? 'Configurado' : 'No configurado'}`);
 console.log(`Kafka: ${config.kafka ? 'Configurado' : 'No configurado'}`);
+console.log(`MongoDB Plugin: ${config.plugins.mongo ? 'Configurado' : 'No configurado (opcional)'}`);
 
 // Crear e iniciar el gateway
-const gateway = createPasarela(config);
+const gateway = createRelay(config);
 
 gateway.on('ready', ({ port }) => {
   console.log(`Servidor listo en http://localhost:${port}`);
@@ -82,6 +98,10 @@ gateway.on('redis:connected', () => {
 
 gateway.on('kafka:connected', () => {
   console.log('Kafka producer activado');
+});
+
+gateway.on('plugin:mongo:connected', () => {
+  console.log('MongoDB plugin activado');
 });
 
 gateway.start();
