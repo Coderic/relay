@@ -54,6 +54,17 @@ function staticHandler(req, res) {
   res.end('Not Found');
 }
 
+// Configuración CORS desde variables de entorno
+const corsOrigin = process.env.CORS_ORIGIN || '*';
+const corsMethods = process.env.CORS_METHODS || 'GET,POST';
+
+// Parsear CORS_ORIGIN si es una lista separada por comas
+const corsConfig = {
+  origin: corsOrigin.includes(',') ? corsOrigin.split(',').map(o => o.trim()) : corsOrigin,
+  methods: corsMethods.split(',').map(m => m.trim()),
+  credentials: process.env.CORS_CREDENTIALS === 'true'
+};
+
 // Configuración desde variables de entorno
 const config = {
   port: parseInt(process.env.PORT) || 5000,
@@ -62,6 +73,7 @@ const config = {
   kafka: process.env.KAFKA_BROKERS ? { 
     brokers: process.env.KAFKA_BROKERS.split(',') 
   } : null,
+  cors: corsConfig,
   plugins: {
     // Plugin MongoDB (opcional)
     mongo: process.env.MONGO_URL ? {
@@ -81,6 +93,7 @@ const config = {
 console.log('Coderic Relay v2.0');
 console.log(`Puerto: ${config.port}`);
 console.log(`Instancia: ${config.instanceId}`);
+console.log(`CORS Origin: ${Array.isArray(config.cors.origin) ? config.cors.origin.join(', ') : config.cors.origin}`);
 console.log(`Redis: ${config.redis ? 'Configurado' : 'No configurado'}`);
 console.log(`Kafka: ${config.kafka ? 'Configurado' : 'No configurado'}`);
 console.log(`MongoDB Plugin: ${config.plugins.mongo ? 'Configurado' : 'No configurado (opcional)'}`);
