@@ -55,16 +55,27 @@ relay.on('relay', (data) => {
 
 **Identificador usado**: `deviceId` (generado automáticamente)
 
-## 💬 Chat
+## 💬 Chat - Colección Completa
 
-Chat en tiempo real multi-usuario. Ejemplo básico de comunicación entre usuarios.
+Colección de 4 ejemplos de chat demostrando todas las capacidades de Relay v2.2.
 
 - 📦 [Repositorio](https://github.com/Coderic/chat)
 - 🐛 [Issues](https://github.com/Coderic/chat/issues)
 - 🌐 [Demo en línea](https://coderic.org/chat/)
 
+**Ejemplos incluidos:**
+
+1. **Chat Básico** - Mensajería multi-usuario en tiempo real
+2. **Chat con Rooms** - Segmentación por salas (v2.1+)
+3. **Chat con Video** - Texto + video llamadas (v2.2+)
+4. **Llamadas WebRTC** - Aplicación completa de video llamadas
+
 **Características**:
 - Chat multi-usuario
+- Rooms para segmentación
+- Video llamadas P2P
+- Audio en tiempo real
+- Compartir pantalla
 - Identificación por nickname
 - Mensajes en tiempo real
 

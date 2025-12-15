@@ -200,8 +200,8 @@ CMD ["node", "src/server.js"]
 
 ### Básicos
 
-#### 💬 Chat en tiempo real
-Chat multi-usuario
+#### 💬 Chat - Colección Completa
+4 ejemplos: Básico, Rooms, Video, Llamadas WebRTC
 
 - 📦 [Repositorio](https://github.com/Coderic/chat) | 🐛 [Issues](https://github.com/Coderic/chat/issues) | 🌐 [Demo](https://coderic.org/chat/)
 
