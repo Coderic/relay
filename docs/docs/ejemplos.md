@@ -6,7 +6,9 @@ Relay incluye varios ejemplos funcionales que demuestran diferentes casos de uso
 
 Sistema de pedidos de pizza con tracking en tiempo real. Demuestra cómo sincronizar estados entre múltiples vistas (cliente y cocina).
 
-**Demo en vivo**: [https://coderic.org/pizza-delivery/](https://coderic.org/pizza-delivery/)
+- 📦 [Repositorio](https://github.com/Coderic/pizza-delivery)
+- 🐛 [Issues](https://github.com/Coderic/pizza-delivery/issues)
+- 🌐 [Demo en línea](https://coderic.org/pizza-delivery/)
 
 **Características**:
 - Vista Cliente: Selecciona pizzas y realiza pedidos
@@ -57,7 +59,9 @@ relay.on('relay', (data) => {
 
 Chat en tiempo real multi-usuario. Ejemplo básico de comunicación entre usuarios.
 
-**Demo en vivo**: [https://coderic.org/chat/](https://coderic.org/chat/)
+- 📦 [Repositorio](https://github.com/Coderic/chat)
+- 🐛 [Issues](https://github.com/Coderic/chat/issues)
+- 🌐 [Demo en línea](https://coderic.org/chat/)
 
 **Características**:
 - Chat multi-usuario
@@ -94,7 +98,9 @@ relay.on('relay', (data) => {
 
 Sistema de reserva de eventos con disponibilidad en tiempo real. Demuestra cómo prevenir overbooking y sincronizar disponibilidad.
 
-**Demo en vivo**: [https://coderic.org/booking-eventos/](https://coderic.org/booking-eventos/)
+- 📦 [Repositorio](https://github.com/Coderic/booking-eventos)
+- 🐛 [Issues](https://github.com/Coderic/booking-eventos/issues)
+- 🌐 [Demo en línea](https://coderic.org/booking-eventos/)
 
 **Características**:
 - Selección de asientos/lugares
@@ -154,15 +160,57 @@ El monitor te permite ver:
 Relay tiene más ejemplos disponibles en GitHub:
 
 ### Reservas y Booking
-- [Bus Express](https://github.com/Coderic/bus) - Reserva de autobuses con React
-- [SkyBooker](https://github.com/Coderic/aerolinea) - Reserva de vuelos con Angular
-- [Hotel Booking](https://github.com/Coderic/hotel) - Reserva de hoteles con Vue.js
-- [Cine](https://github.com/Coderic/cine) - Reserva de asientos de cine con Svelte
+
+#### 🚌 Bus Express
+Reserva de autobuses con React
+
+- 📦 [Repositorio](https://github.com/Coderic/bus)
+- 🐛 [Issues](https://github.com/Coderic/bus/issues)
+- 🌐 [Demo en línea](https://coderic.org/bus/)
+
+#### ✈️ SkyBooker
+Reserva de vuelos con Angular
+
+- 📦 [Repositorio](https://github.com/Coderic/aerolinea)
+- 🐛 [Issues](https://github.com/Coderic/aerolinea/issues)
+- 🌐 [Demo en línea](https://coderic.org/aerolinea/)
+
+#### 🏨 Hotel Booking
+Reserva de hoteles con Vue.js
+
+- 📦 [Repositorio](https://github.com/Coderic/hotel)
+- 🐛 [Issues](https://github.com/Coderic/hotel/issues)
+- 🌐 [Demo en línea](https://coderic.org/hotel/)
+
+#### 🎬 Cine
+Reserva de asientos de cine con Svelte
+
+- 📦 [Repositorio](https://github.com/Coderic/cine)
+- 🐛 [Issues](https://github.com/Coderic/cine/issues)
+- 🌐 [Demo en línea](https://coderic.org/cine/)
 
 ### Otros Casos de Uso
-- [PasaPay](https://github.com/Coderic/pagos) - Pagos P2P estilo Nequi con Vue.js
-- [Subastas](https://github.com/Coderic/subastas) - Sistema de subastas en tiempo real con React
-- [Cola de Turnos](https://github.com/Coderic/cola-turnos) - Sistema de cola tipo banco con múltiples operadores
+
+#### 💳 PasaPay
+Pagos P2P estilo Nequi con Vue.js
+
+- 📦 [Repositorio](https://github.com/Coderic/pagos)
+- 🐛 [Issues](https://github.com/Coderic/pagos/issues)
+- 🌐 [Demo en línea](https://coderic.org/pagos/)
+
+#### 🔨 Subastas
+Sistema de subastas en tiempo real con React
+
+- 📦 [Repositorio](https://github.com/Coderic/subastas)
+- 🐛 [Issues](https://github.com/Coderic/subastas/issues)
+- 🌐 [Demo en línea](https://coderic.org/subastas/)
+
+#### 🏦 Cola de Turnos
+Sistema de cola tipo banco con múltiples operadores
+
+- 📦 [Repositorio](https://github.com/Coderic/cola-turnos)
+- 🐛 [Issues](https://github.com/Coderic/cola-turnos/issues)
+- 🌐 [Demo en línea](https://coderic.org/cola-turnos/)
 
 ## Crear tu Propio Ejemplo
 

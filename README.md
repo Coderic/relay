@@ -182,20 +182,60 @@ CMD ["node", "src/server.js"]
 ## Ejemplos
 
 ### Básicos
-- [Chat en tiempo real](https://github.com/Coderic/chat) - Chat multi-usuario
-- [Pizza Delivery](https://github.com/Coderic/pizza-delivery) - Tracking de pedidos
-- [Booking de Eventos](https://github.com/Coderic/booking-eventos) - Reserva de eventos
+
+#### 💬 Chat en tiempo real
+Chat multi-usuario
+
+- 📦 [Repositorio](https://github.com/Coderic/chat) | 🐛 [Issues](https://github.com/Coderic/chat/issues) | 🌐 [Demo](https://coderic.org/chat/)
+
+#### 🍕 Pizza Delivery
+Tracking de pedidos
+
+- 📦 [Repositorio](https://github.com/Coderic/pizza-delivery) | 🐛 [Issues](https://github.com/Coderic/pizza-delivery/issues) | 🌐 [Demo](https://coderic.org/pizza-delivery/)
+
+#### 🎫 Booking de Eventos
+Reserva de eventos
+
+- 📦 [Repositorio](https://github.com/Coderic/booking-eventos) | 🐛 [Issues](https://github.com/Coderic/booking-eventos/issues) | 🌐 [Demo](https://coderic.org/booking-eventos/)
 
 ### Reservas y Booking
-- [Bus Express](https://github.com/Coderic/bus) - Reserva de autobuses (React)
-- [SkyBooker](https://github.com/Coderic/aerolinea) - Reserva de vuelos (Angular)
-- [Hotel Booking](https://github.com/Coderic/hotel) - Reserva de hoteles (Vue.js)
-- [Cine](https://github.com/Coderic/cine) - Reserva de asientos de cine (Svelte)
+
+#### 🚌 Bus Express
+Reserva de autobuses (React)
+
+- 📦 [Repositorio](https://github.com/Coderic/bus) | 🐛 [Issues](https://github.com/Coderic/bus/issues) | 🌐 [Demo](https://coderic.org/bus/)
+
+#### ✈️ SkyBooker
+Reserva de vuelos (Angular)
+
+- 📦 [Repositorio](https://github.com/Coderic/aerolinea) | 🐛 [Issues](https://github.com/Coderic/aerolinea/issues) | 🌐 [Demo](https://coderic.org/aerolinea/)
+
+#### 🏨 Hotel Booking
+Reserva de hoteles (Vue.js)
+
+- 📦 [Repositorio](https://github.com/Coderic/hotel) | 🐛 [Issues](https://github.com/Coderic/hotel/issues) | 🌐 [Demo](https://coderic.org/hotel/)
+
+#### 🎬 Cine
+Reserva de asientos de cine (Svelte)
+
+- 📦 [Repositorio](https://github.com/Coderic/cine) | 🐛 [Issues](https://github.com/Coderic/cine/issues) | 🌐 [Demo](https://coderic.org/cine/)
 
 ### Otros Casos de Uso
-- [PasaPay](https://github.com/Coderic/pagos) - Pagos P2P estilo Nequi (Vue.js)
-- [Subastas](https://github.com/Coderic/subastas) - Sistema de subastas en tiempo real (React)
-- [Cola de Turnos](https://github.com/Coderic/cola-turnos) - Sistema de cola tipo banco
+
+#### 💳 PasaPay
+Pagos P2P estilo Nequi (Vue.js)
+
+- 📦 [Repositorio](https://github.com/Coderic/pagos) | 🐛 [Issues](https://github.com/Coderic/pagos/issues) | 🌐 [Demo](https://coderic.org/pagos/)
+
+#### 🔨 Subastas
+Sistema de subastas en tiempo real (React)
+
+- 📦 [Repositorio](https://github.com/Coderic/subastas) | 🐛 [Issues](https://github.com/Coderic/subastas/issues) | 🌐 [Demo](https://coderic.org/subastas/)
+
+#### 🏦 Cola de Turnos
+Sistema de cola tipo banco
+
+- 📦 [Repositorio](https://github.com/Coderic/cola-turnos) | 🐛 [Issues](https://github.com/Coderic/cola-turnos/issues) | 🌐 [Demo](https://coderic.org/cola-turnos/)
 
 ## Website
 
