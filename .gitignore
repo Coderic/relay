@@ -12,3 +12,14 @@ logs
 results
 
 npm-debug.log
+
+# Dependencies
+node_modules/
+docs/node_modules/
+
+# Build outputs
+docs/.docusaurus/
+docs/build/
+
+# Test files
+test-socketio.mjs
