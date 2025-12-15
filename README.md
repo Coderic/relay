@@ -181,9 +181,9 @@ CMD ["node", "src/server.js"]
 
 ## Ejemplos
 
-- [Chat en tiempo real](https://github.com/Coderic/relay-ejemplo-chat)
-- [Pizza Delivery](https://github.com/Coderic/relay-ejemplo-pizza-delivery)
-- [Booking de Eventos](https://github.com/Coderic/relay-ejemplo-booking-eventos)
+- [Chat en tiempo real](https://github.com/Coderic/chat)
+- [Pizza Delivery](https://github.com/Coderic/pizza-delivery)
+- [Booking de Eventos](https://github.com/Coderic/booking-eventos)
 - [Bus Express](https://github.com/Coderic/relay-ejemplo-bus) (React)
 - [SkyBooker](https://github.com/Coderic/relay-ejemplo-aerolinea) (Angular)
 - [PasaPay](https://github.com/Coderic/relay-ejemplo-pagos) (Vue.js)
