@@ -19,7 +19,8 @@ COPY src/ ./src/
 COPY public/ ./public/
 
 # Instalar wget para healthcheck y crear usuario no-root
-RUN apk add --no-cache wget && \
+# Usar --no-scripts para evitar problemas con triggers en multi-platform builds
+RUN apk add --no-cache --no-scripts wget && \
     addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001 && \
     chown -R nodejs:nodejs /app
