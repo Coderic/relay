@@ -87,9 +87,9 @@ export default function Home(): JSX.Element {
               <div className="col col--6">
                 <h2>Casos de Uso</h2>
                 <ul>
-                  <li>💬 Chat en tiempo real</li>
-                  <li>🍕 Tracking de pedidos</li>
-                  <li>🎫 Booking con disponibilidad en vivo</li>
+                  <li>💬 <a href="https://coderic.org/chat/" target="_blank" rel="noopener noreferrer">Chat en tiempo real</a></li>
+                  <li>🍕 <a href="https://coderic.org/pizza-delivery/" target="_blank" rel="noopener noreferrer">Tracking de pedidos</a></li>
+                  <li>🎫 <a href="https://coderic.org/booking-eventos/" target="_blank" rel="noopener noreferrer">Booking con disponibilidad en vivo</a></li>
                   <li>🎮 Juegos multijugador</li>
                   <li>📊 Dashboards colaborativos</li>
                   <li>🏠 IoT y domótica</li>
@@ -98,7 +98,7 @@ export default function Home(): JSX.Element {
               <div className="col col--6">
                 <h2>Ejemplo Rápido</h2>
                 <pre style={{background: '#1e1e1e', padding: '1rem', borderRadius: '8px', color: '#d4d4d4'}}>
-{`const socket = io('http://localhost:5000/relay');
+{`const socket = io('http://demo.relay.coderic.net/relay');
 
 socket.emit('identificar', 'mi-usuario');
 
@@ -112,6 +112,18 @@ socket.on('relay', (data) => {
   console.log(data);
 });`}
                 </pre>
+                <div style={{marginTop: '1rem'}}>
+                  <h3>🔗 Demo en Vivo</h3>
+                  <p>Prueba Relay ahora mismo con nuestro monitor en tiempo real:</p>
+                  <p>
+                    <a href="http://demo.relay.coderic.net/" target="_blank" rel="noopener noreferrer" style={{color: '#25c2a0', fontWeight: 'bold'}}>
+                      http://demo.relay.coderic.net/
+                    </a>
+                  </p>
+                  <p style={{fontSize: '0.9rem', color: '#888'}}>
+                    Visualiza conexiones activas, mensajes por minuto, logs en tiempo real y estadísticas del sistema.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
