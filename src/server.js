@@ -13,6 +13,7 @@
  *   MONGO_URL - URL de conexión a MongoDB
  *   MONGO_DB_NAME - Nombre de la base de datos (default: relay)
  *   INSTANCE_ID - ID de instancia
+ *   WEBRTC_ENABLED - Habilitar plugin WebRTC (default: true, usar 'false' para desactivar)
  */
 
 import 'dotenv/config';
@@ -85,7 +86,9 @@ const config = {
         events: process.env.MONGO_COLLECTIONS_EVENTS || 'events',
         logs: process.env.MONGO_COLLECTIONS_LOGS || 'logs'
       }
-    } : null
+    } : null,
+    // Plugin WebRTC (habilitado por defecto, desactivar con WEBRTC_ENABLED=false)
+    webrtc: process.env.WEBRTC_ENABLED === 'false' ? false : undefined
   },
   httpHandler: existsSync(PUBLIC_DIR) ? staticHandler : null
 };

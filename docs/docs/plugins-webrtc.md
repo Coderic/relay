@@ -17,6 +17,13 @@ Plugin opcional de WebRTC para Relay que proporciona señalización para video, 
 
 El plugin WebRTC está activado por defecto. Para desactivarlo:
 
+**Opción 1: Variable de entorno (recomendado para Docker)**
+```bash
+WEBRTC_ENABLED=false
+```
+
+**Opción 2: Configuración programática**
+
 ```javascript
 const gateway = createRelay({
   plugins: {

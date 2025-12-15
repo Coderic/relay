@@ -77,6 +77,7 @@ services:
 |----------|-------------|---------|
 | `PORT` | Puerto del servidor | `5000` |
 | `REDIS_URL` | URL de Redis | - |
+| `WEBRTC_ENABLED` | Habilitar plugin WebRTC | `true` |
 | `KAFKA_BROKERS` | Brokers Kafka (comma-separated) | - |
 | `INSTANCE_ID` | ID de instancia | `process.pid` |
 | `MONGODB_URL` | URL de MongoDB (opcional) | - |
