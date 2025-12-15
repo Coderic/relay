@@ -64,6 +64,8 @@ services:
       - PORT=5000
       - REDIS_URL=redis://redis:6379
       - KAFKA_BROKERS=kafka:9092
+      # Opcional: Desactivar plugin WebRTC
+      # - WEBRTC_ENABLED=false
     depends_on:
       - redis
       - kafka
