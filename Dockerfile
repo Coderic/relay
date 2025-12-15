@@ -18,8 +18,9 @@ RUN npm install --omit=dev
 COPY src/ ./src/
 COPY public/ ./public/
 
-# Usuario no-root
-RUN addgroup -g 1001 -S nodejs && \
+# Instalar wget para healthcheck y crear usuario no-root
+RUN apk add --no-cache wget && \
+    addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001 && \
     chown -R nodejs:nodejs /app
 
