@@ -31,7 +31,7 @@ const config = {
       ({
         docs: {
           sidebarPath: './sidebars.js',
-          editUrl: 'https://github.com/Coderic/Relay/tree/main/docs/',
+          editUrl: 'https://github.com/Coderic/Relay/tree/master/docs/',
         },
         blog: false,
         theme: {
