@@ -17,6 +17,8 @@ export class WebRTCPlugin extends RelayPlugin {
     super('webrtc', options);
     this.rooms = new Map(); // roomId -> Set de socketIds
     this.peers = new Map(); // socketId -> { roomId, peerId }
+    this.peerIdToSocketId = new Map(); // peerId -> socketId (mapa inverso)
+    this.namespace = null; // Guardar referencia al namespace
   }
 
   /**
@@ -34,6 +36,8 @@ export class WebRTCPlugin extends RelayPlugin {
    * @param {Namespace} namespace - Namespace de Socket.io
    */
   setupHandlers(namespace) {
+    this.namespace = namespace; // Guardar referencia al namespace
+    
     namespace.on('connection', (socket) => {
       // Escuchar mensajes de tipo webrtc:* en el evento relay
       socket.on('relay', (data) => {
@@ -74,6 +78,8 @@ export class WebRTCPlugin extends RelayPlugin {
     const { roomId, peerId } = data;
     if (!roomId) return;
 
+    const actualPeerId = peerId || socket.id;
+
     // Inicializar room si no existe
     if (!this.rooms.has(roomId)) {
       this.rooms.set(roomId, new Set());
@@ -87,7 +93,8 @@ export class WebRTCPlugin extends RelayPlugin {
 
     // Agregar socket al room
     room.add(socket.id);
-    this.peers.set(socket.id, { roomId, peerId: peerId || socket.id });
+    this.peers.set(socket.id, { roomId, peerId: actualPeerId });
+    this.peerIdToSocketId.set(actualPeerId, socket.id); // Mapa inverso
 
     // Unirse al room de Socket.io (para usar la infraestructura de Relay)
     socket.join(roomId);
@@ -102,11 +109,11 @@ export class WebRTCPlugin extends RelayPlugin {
     // Notificar a otros en el room
     socket.to(roomId).emit('relay', {
       tipo: 'webrtc:peer-joined',
-      peerId: peerId || socket.id,
+      peerId: actualPeerId,
       socketId: socket.id
     });
 
-    this.emit('peer:joined', { socketId: socket.id, roomId, peerId: peerId || socket.id });
+    this.emit('peer:joined', { socketId: socket.id, roomId, peerId: actualPeerId });
   }
 
   /**
@@ -118,15 +125,15 @@ export class WebRTCPlugin extends RelayPlugin {
     const { to, offer } = data;
     if (!to || !offer) return;
 
-    // Reenviar usando la API de Relay (destino: 'yo' para el destinatario específico)
-    // Nota: Relay no tiene destino directo a un socket específico,
-    // pero podemos usar el room y filtrar en el cliente, o usar 'yo' con el socketId
-    // Por ahora, usamos el room y el cliente filtra por socketId
-    const peerInfo = this.peers.get(socket.id);
-    if (!peerInfo) return;
+    // Buscar socketId del destinatario usando el mapa inverso
+    const targetSocketId = this.peerIdToSocketId.get(to);
+    if (!targetSocketId) {
+      console.warn(`[WebRTCPlugin] No se encontró socketId para peerId: ${to}`);
+      return;
+    }
 
-    // Enviar al room, el cliente filtrará por socketId
-    socket.to(peerInfo.roomId).emit('relay', {
+    // Enviar directamente al socket del destinatario
+    this.namespace.to(targetSocketId).emit('relay', {
       tipo: 'webrtc:offer',
       from: socket.id,
       to,
@@ -143,10 +150,14 @@ export class WebRTCPlugin extends RelayPlugin {
     const { to, answer } = data;
     if (!to || !answer) return;
 
-    const peerInfo = this.peers.get(socket.id);
-    if (!peerInfo) return;
+    const targetSocketId = this.peerIdToSocketId.get(to);
+    if (!targetSocketId) {
+      console.warn(`[WebRTCPlugin] No se encontró socketId para peerId: ${to}`);
+      return;
+    }
 
-    socket.to(peerInfo.roomId).emit('relay', {
+    // Enviar directamente al socket del destinatario
+    this.namespace.to(targetSocketId).emit('relay', {
       tipo: 'webrtc:answer',
       from: socket.id,
       to,
@@ -163,10 +174,14 @@ export class WebRTCPlugin extends RelayPlugin {
     const { to, candidate } = data;
     if (!to || !candidate) return;
 
-    const peerInfo = this.peers.get(socket.id);
-    if (!peerInfo) return;
+    const targetSocketId = this.peerIdToSocketId.get(to);
+    if (!targetSocketId) {
+      console.warn(`[WebRTCPlugin] No se encontró socketId para peerId: ${to}`);
+      return;
+    }
 
-    socket.to(peerInfo.roomId).emit('relay', {
+    // Enviar directamente al socket del destinatario
+    this.namespace.to(targetSocketId).emit('relay', {
       tipo: 'webrtc:ice-candidate',
       from: socket.id,
       to,
@@ -182,7 +197,7 @@ export class WebRTCPlugin extends RelayPlugin {
     const peerInfo = this.peers.get(socket.id);
     if (!peerInfo) return;
 
-    const { roomId } = peerInfo;
+    const { roomId, peerId } = peerInfo;
     const room = this.rooms.get(roomId);
 
     if (room) {
@@ -192,12 +207,14 @@ export class WebRTCPlugin extends RelayPlugin {
       }
     }
 
+    // Limpiar mapas
     this.peers.delete(socket.id);
-    
+    this.peerIdToSocketId.delete(peerId);
+
     // Notificar a otros en el room
     socket.to(roomId).emit('relay', {
       tipo: 'webrtc:peer-left',
-      peerId: socket.id,
+      peerId: peerId,
       socketId: socket.id
     });
 
@@ -221,6 +238,8 @@ export class WebRTCPlugin extends RelayPlugin {
   async shutdown() {
     this.rooms.clear();
     this.peers.clear();
+    this.peerIdToSocketId.clear();
+    this.namespace = null;
     await super.shutdown();
   }
 }

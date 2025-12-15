@@ -1,6 +1,6 @@
 {
   "name": "@coderic/relay",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Coderic Relay - Real-time messaging infrastructure",
   "main": "src/index.js",
   "type": "module",

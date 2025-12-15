@@ -1,5 +1,5 @@
 /**
- * Coderic Relay v2.2
+ * Coderic Relay v2.2.1
  * Real-time messaging infrastructure - Versión como paquete npm
  * 
  * API de eventos:
