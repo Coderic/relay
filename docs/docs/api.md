@@ -113,6 +113,35 @@ client.on('mensaje', (data) => {
 });
 ```
 
+### WebRTCManager (v2.2)
+
+Cliente WebRTC para video/audio en tiempo real.
+
+```javascript
+import { WebRTCManager } from '@coderic/relay';
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:5000/relay');
+const webrtc = new WebRTCManager(socket);
+
+// Obtener stream local
+const stream = await navigator.mediaDevices.getUserMedia({
+  video: true,
+  audio: true
+});
+
+// Callbacks
+webrtc.onRemoteStream = (peerId, stream) => {
+  videoElement.srcObject = stream;
+};
+
+// Unirse a room
+await webrtc.setLocalStream(stream);
+await webrtc.joinRoom('mi-sala');
+```
+
+Ver [documentación completa de WebRTC](/docs/plugins-webrtc) para más detalles.
+
 ## Eventos del Cliente
 
 ### Eventos que puedes emitir

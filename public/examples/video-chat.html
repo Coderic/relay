@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebRTC Video Chat - Coderic Relay</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    .header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    .header p { opacity: 0.9; }
+    .controls {
+      padding: 2rem;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .controls input {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.75rem 1rem;
+      border: 2px solid #dee2e6;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+    .controls button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    .btn-primary:hover { background: #5568d3; }
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+    .btn-danger:hover { background: #c82333; }
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+    .btn-secondary:hover { background: #5a6268; }
+    .videos {
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+    .video-container {
+      position: relative;
+      background: #000;
+      border-radius: 10px;
+      overflow: hidden;
+      aspect-ratio: 16/9;
+    }
+    .video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .video-label {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    .status {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+    }
+    .status.connected { background: rgba(34,197,94,0.9); }
+    .status.connecting { background: rgba(234,179,8,0.9); }
+    .status.disconnected { background: rgba(239,68,68,0.9); }
+    .media-controls {
+      padding: 1rem 2rem;
+      background: #f8f9fa;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      border-top: 1px solid #e9ecef;
+    }
+    .empty {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #6c757d;
+    }
+    .empty h3 { margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎥 WebRTC Video Chat</h1>
+      <p>Powered by Coderic Relay v2.2</p>
+    </div>
+
+    <div class="controls">
+      <input 
+        type="text" 
+        id="roomId" 
+        placeholder="Ingresa un ID de sala (ej: sala-123)"
+        value="sala-demo"
+      >
+      <button class="btn-primary" onclick="joinRoom()">🚀 Unirse</button>
+      <button class="btn-danger" onclick="leaveRoom()">🚪 Salir</button>
+      <button class="btn-secondary" onclick="shareScreen()">🖥️ Compartir Pantalla</button>
+    </div>
+
+    <div class="media-controls">
+      <button class="btn-secondary" id="audioBtn" onclick="toggleAudio()">
+        🎤 Audio: ON
+      </button>
+      <button class="btn-secondary" id="videoBtn" onclick="toggleVideo()">
+        📹 Video: ON
+      </button>
+    </div>
+
+    <div class="videos" id="videos">
+      <div class="empty">
+        <h3>👋 Bienvenido</h3>
+        <p>Ingresa un ID de sala y haz clic en "Unirse" para comenzar</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script type="module">
+    // WebRTCManager inline para el ejemplo
+    class WebRTCManager {
+      constructor(socket, config = {}) {
+        this.socket = socket;
+        this.config = {
+          iceServers: config.iceServers || [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' }
+          ]
+        };
+        this.peers = new Map();
+        this.localStream = null;
+        this.roomId = null;
+        this.peerId = null;
+        this.setupSocketHandlers();
+      }
+
+      setupSocketHandlers() {
+        this.socket.on('relay', (data) => {
+          if (!data.tipo || !data.tipo.startsWith('webrtc:')) return;
+          switch (data.tipo) {
+            case 'webrtc:joined':
+              this.handleJoined(data);
+              break;
+            case 'webrtc:peer-joined':
+              this.handlePeerJoined(data);
+              break;
+            case 'webrtc:offer':
+              this.handleOffer(data);
+              break;
+            case 'webrtc:answer':
+              this.handleAnswer(data);
+              break;
+            case 'webrtc:ice-candidate':
+              this.handleIceCandidate(data);
+              break;
+            case 'webrtc:peer-left':
+              this.handlePeerLeft(data);
+              break;
+          }
+        });
+      }
+
+      handleJoined(data) {
+        const { roomId, peers } = data;
+        this.roomId = roomId;
+        peers.forEach(peerId => this.createPeerConnection(peerId, true));
+      }
+
+      handlePeerJoined(data) {
+        const { peerId, socketId } = data;
+        if (!this.peers.has(socketId)) {
+          this.createPeerConnection(socketId, false);
+        }
+      }
+
+      async handleOffer(data) {
+        const { from, to, offer } = data;
+        if (to !== this.socket.id && to !== this.peerId) return;
+        let pc = this.peers.get(from);
+        if (!pc) pc = this.createPeerConnection(from, false);
+        await pc.setRemoteDescription(new RTCSessionDescription(offer));
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        this.socket.emit('relay', {
+          destino: 'room',
+          room: this.roomId,
+          tipo: 'webrtc:answer',
+          to: from,
+          answer: pc.localDescription
+        });
+      }
+
+      async handleAnswer(data) {
+        const { from, to, answer } = data;
+        if (to !== this.socket.id && to !== this.peerId) return;
+        const pc = this.peers.get(from);
+        if (pc) await pc.setRemoteDescription(new RTCSessionDescription(answer));
+      }
+
+      async handleIceCandidate(data) {
+        const { from, to, candidate } = data;
+        if (to !== this.socket.id && to !== this.peerId) return;
+        const pc = this.peers.get(from);
+        if (pc && candidate) await pc.addIceCandidate(new RTCIceCandidate(candidate));
+      }
+
+      handlePeerLeft(data) {
+        const { peerId, socketId } = data;
+        this.closePeerConnection(socketId || peerId);
+      }
+
+      createPeerConnection(peerId, createOffer) {
+        const pc = new RTCPeerConnection(this.config);
+        if (this.localStream) {
+          this.localStream.getTracks().forEach(track => pc.addTrack(track, this.localStream));
+        }
+        pc.onicecandidate = (event) => {
+          if (event.candidate) {
+            this.socket.emit('relay', {
+              destino: 'room',
+              room: this.roomId,
+              tipo: 'webrtc:ice-candidate',
+              to: peerId,
+              candidate: event.candidate
+            });
+          }
+        };
+        pc.ontrack = (event) => {
+          if (this.onRemoteStream) this.onRemoteStream(peerId, event.streams[0]);
+        };
+        pc.onconnectionstatechange = () => {
+          if (this.onConnectionStateChange) this.onConnectionStateChange(peerId, pc.connectionState);
+          if (pc.connectionState === 'failed' || pc.connectionState === 'disconnected') {
+            this.closePeerConnection(peerId);
+          }
+        };
+        this.peers.set(peerId, pc);
+        if (createOffer) this.createOffer(peerId);
+        return pc;
+      }
+
+      async createOffer(peerId) {
+        const pc = this.peers.get(peerId);
+        if (!pc) return;
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        this.socket.emit('relay', {
+          destino: 'room',
+          room: this.roomId,
+          tipo: 'webrtc:offer',
+          to: peerId,
+          offer: pc.localDescription
+        });
+      }
+
+      async setLocalStream(stream) {
+        this.localStream = stream;
+        this.peers.forEach((pc) => {
+          stream.getTracks().forEach(track => {
+            const sender = pc.getSenders().find(s => s.track?.kind === track.kind);
+            if (sender) sender.replaceTrack(track);
+            else pc.addTrack(track, stream);
+          });
+        });
+      }
+
+      async joinRoom(roomId, peerId = null) {
+        this.peerId = peerId || this.socket.id;
+        this.socket.emit('unirse', roomId, (ok) => {
+          if (ok) {
+            this.socket.emit('relay', {
+              destino: 'room',
+              room: roomId,
+              tipo: 'webrtc:join',
+              roomId,
+              peerId: this.peerId
+            });
+          }
+        });
+      }
+
+      leaveRoom() {
+        if (this.roomId) {
+          this.socket.emit('relay', {
+            destino: 'room',
+            room: this.roomId,
+            tipo: 'webrtc:leave'
+          });
+        }
+        this.peers.forEach((pc) => this.closePeerConnection(peerId));
+        this.roomId = null;
+      }
+
+      closePeerConnection(peerId) {
+        const pc = this.peers.get(peerId);
+        if (pc) {
+          pc.close();
+          this.peers.delete(peerId);
+          if (this.onPeerDisconnected) this.onPeerDisconnected(peerId);
+        }
+      }
+
+      toggleAudio(enabled) {
+        if (this.localStream) {
+          this.localStream.getAudioTracks().forEach(track => track.enabled = enabled);
+        }
+      }
+
+      toggleVideo(enabled) {
+        if (this.localStream) {
+          this.localStream.getVideoTracks().forEach(track => track.enabled = enabled);
+        }
+      }
+
+      destroy() {
+        this.leaveRoom();
+        if (this.localStream) {
+          this.localStream.getTracks().forEach(track => track.stop());
+          this.localStream = null;
+        }
+      }
+    }
+
+    const RELAY_URL = window.location.origin.replace(/:\d+$/, ':5000') || 'http://localhost:5000';
+    const socket = io(`${RELAY_URL}/relay`);
+    
+    let webrtc = null;
+    let localStream = null;
+    let audioEnabled = true;
+    let videoEnabled = true;
+
+    socket.on('connect', async () => {
+      console.log('Conectado a Relay:', socket.id);
+      // Identificarse automáticamente
+      socket.emit('identificar', `usuario-${Math.random().toString(36).substr(2, 9)}`, (ok) => {
+        console.log('Identificado:', ok);
+      });
+    });
+
+    window.joinRoom = async function() {
+      const roomId = document.getElementById('roomId').value.trim();
+      if (!roomId) {
+        alert('Por favor ingresa un ID de sala');
+        return;
+      }
+
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({
+          video: { width: 1280, height: 720 },
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+
+        document.getElementById('videos').innerHTML = '';
+        addVideoElement('local', localStream, 'Tú (Local)', true);
+
+        webrtc = new WebRTCManager(socket, {
+          iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' }
+          ]
+        });
+
+        webrtc.onRemoteStream = (peerId, stream) => {
+          console.log('Stream remoto recibido de:', peerId);
+          addVideoElement(peerId, stream, `Peer ${peerId.substring(0, 6)}`, false);
+        };
+
+        webrtc.onPeerDisconnected = (peerId) => {
+          console.log('Peer desconectado:', peerId);
+          document.getElementById(`video-${peerId}`)?.remove();
+        };
+
+        webrtc.onConnectionStateChange = (peerId, state) => {
+          console.log(`Peer ${peerId} estado:`, state);
+          updateConnectionStatus(peerId, state);
+        };
+
+        await webrtc.setLocalStream(localStream);
+        await webrtc.joinRoom(roomId);
+
+        console.log('Unido a sala:', roomId);
+      } catch (error) {
+        console.error('Error al unirse:', error);
+        alert('Error: ' + error.message);
+      }
+    };
+
+    window.leaveRoom = function() {
+      if (webrtc) {
+        webrtc.destroy();
+        webrtc = null;
+      }
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+      }
+      document.getElementById('videos').innerHTML = `
+        <div class="empty">
+          <h3>👋 Hasta luego</h3>
+          <p>Ingresa un ID de sala y haz clic en "Unirse" para comenzar de nuevo</p>
+        </div>
+      `;
+      audioEnabled = true;
+      videoEnabled = true;
+      updateButtons();
+    };
+
+    window.toggleAudio = function() {
+      if (!webrtc) return;
+      audioEnabled = !audioEnabled;
+      webrtc.toggleAudio(audioEnabled);
+      updateButtons();
+    };
+
+    window.toggleVideo = function() {
+      if (!webrtc) return;
+      videoEnabled = !videoEnabled;
+      webrtc.toggleVideo(videoEnabled);
+      updateButtons();
+    };
+
+    window.shareScreen = async function() {
+      if (!webrtc) {
+        alert('Primero únete a una sala');
+        return;
+      }
+
+      try {
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({
+          video: { cursor: 'always' },
+          audio: true
+        });
+
+        screenStream.getVideoTracks()[0].onended = async () => {
+          const cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true
+          });
+          await webrtc.setLocalStream(cameraStream);
+          document.getElementById('video-local').srcObject = cameraStream;
+          localStream = cameraStream;
+        };
+
+        await webrtc.setLocalStream(screenStream);
+        document.getElementById('video-local').srcObject = screenStream;
+        localStream = screenStream;
+      } catch (error) {
+        console.error('Error compartiendo pantalla:', error);
+      }
+    };
+
+    function addVideoElement(id, stream, label, muted) {
+      const container = document.createElement('div');
+      container.className = 'video-container';
+      container.id = `video-${id}`;
+
+      const video = document.createElement('video');
+      video.autoplay = true;
+      video.playsInline = true;
+      video.muted = muted;
+      video.srcObject = stream;
+
+      const labelDiv = document.createElement('div');
+      labelDiv.className = 'video-label';
+      labelDiv.textContent = label;
+
+      const status = document.createElement('div');
+      status.className = 'status connected';
+      status.textContent = muted ? 'Local' : 'Conectado';
+
+      container.appendChild(video);
+      container.appendChild(labelDiv);
+      container.appendChild(status);
+
+      document.getElementById('videos').appendChild(container);
+    }
+
+    function updateConnectionStatus(peerId, state) {
+      const statusEl = document.querySelector(`#video-${peerId} .status`);
+      if (!statusEl) return;
+
+      statusEl.className = 'status';
+      switch(state) {
+        case 'connected':
+          statusEl.classList.add('connected');
+          statusEl.textContent = 'Conectado';
+          break;
+        case 'connecting':
+          statusEl.classList.add('connecting');
+          statusEl.textContent = 'Conectando...';
+          break;
+        case 'disconnected':
+        case 'failed':
+          statusEl.classList.add('disconnected');
+          statusEl.textContent = 'Desconectado';
+          break;
+      }
+    }
+
+    function updateButtons() {
+      document.getElementById('audioBtn').textContent = 
+        audioEnabled ? '🎤 Audio: ON' : '🎤 Audio: OFF';
+      document.getElementById('videoBtn').textContent = 
+        videoEnabled ? '📹 Video: ON' : '📹 Video: OFF';
+    }
+  </script>
+</body>
+</html>
+

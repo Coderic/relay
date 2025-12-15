@@ -16,3 +16,4 @@
 
 export { Relay, createRelay } from './Relay.js';
 export { RelayClient } from './client.js';
+export { WebRTCManager } from './webrtc-client.js';

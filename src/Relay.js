@@ -1,5 +1,5 @@
 /**
- * Coderic Relay v2.1
+ * Coderic Relay v2.2
  * Real-time messaging infrastructure - Versión como paquete npm
  * 
  * API de eventos:
@@ -41,6 +41,7 @@ export class Relay extends EventEmitter {
    * @param {Function} [options.httpHandler] - Handler HTTP personalizado
    * @param {Object} [options.plugins] - Configuración de plugins opcionales
    * @param {Object} [options.plugins.mongo] - Configuración del plugin MongoDB
+ * @param {Object} [options.plugins.webrtc] - Configuración del plugin WebRTC
    */
   constructor(options = {}) {
     super();
@@ -186,6 +187,26 @@ export class Relay extends EventEmitter {
         console.log(`[Relay ${this.options.instanceId}] MongoDB plugin no disponible:`, error.message);
       }
     }
+
+    // Plugin WebRTC (opcional)
+    if (this.options.plugins.webrtc !== false) {
+      try {
+        const { WebRTCPlugin } = await import('./plugins/webrtc.js');
+        const webrtcPlugin = new WebRTCPlugin(this.options.plugins.webrtc || {});
+        
+        await webrtcPlugin.initialize();
+        registerPlugin('webrtc', webrtcPlugin);
+        
+        this._emitLog('success', 'webrtc', 'WebRTC plugin activado', { 
+          instance: this.options.instanceId 
+        });
+        this.emit('plugin:webrtc:ready');
+        console.log(`[Relay ${this.options.instanceId}] WebRTC plugin activado`);
+      } catch (error) {
+        this.emit('plugin:webrtc:error', error);
+        console.log(`[Relay ${this.options.instanceId}] WebRTC plugin no disponible:`, error.message);
+      }
+    }
   }
   
   /**
@@ -270,6 +291,12 @@ export class Relay extends EventEmitter {
     // Namespace de monitoreo
     this.monitorNamespace = this.io.of('/monitor');
     this._setupMonitorNamespace();
+
+    // Setup WebRTC plugin handlers (si está activo)
+    const webrtcPlugin = getPlugin('webrtc');
+    if (webrtcPlugin?.isEnabled()) {
+      webrtcPlugin.setupHandlers(this.namespace);
+    }
   }
   
   /**
@@ -528,6 +555,11 @@ export class Relay extends EventEmitter {
       await mongoPlugin.shutdown();
     }
     
+    const webrtcPlugin = getPlugin('webrtc');
+    if (webrtcPlugin?.isEnabled()) {
+      await webrtcPlugin.shutdown();
+    }
+    
     if (this.kafkaProducer) {
       await this.kafkaProducer.disconnect();
     }
@@ -578,7 +610,8 @@ export class Relay extends EventEmitter {
       instance: this.options.instanceId,
       redis: !!this.pubClient,
       kafka: !!this.kafkaProducer,
-      mongo: mongoPlugin?.isConnected() || false
+      mongo: mongoPlugin?.isConnected() || false,
+      webrtc: getPlugin('webrtc')?.isEnabled() || false
     };
   }
 }

@@ -51,7 +51,8 @@ export class RelayPlugin extends EventEmitter {
  * Registro de plugins disponibles
  */
 export const plugins = {
-  mongo: null
+  mongo: null,
+  webrtc: null
 };
 
 /**
