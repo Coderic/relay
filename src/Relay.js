@@ -1,9 +1,10 @@
 /**
- * Coderic Relay v2.0
+ * Coderic Relay v2.1
  * Real-time messaging infrastructure - Versión como paquete npm
  * 
  * API de eventos:
  * - identificar: Identificar usuario
+ * - unirse: Unirse a un room
  * - notificar: Enviar notificaciones  
  * - relay: Canal de mensajes genérico
  * 
@@ -11,6 +12,7 @@
  * - yo: Solo al emisor
  * - ustedes: A todos menos el emisor
  * - nosotros: A todos incluyendo el emisor
+ * - room: A todos en el room especificado
  */
 
 import { createServer } from 'http';
@@ -372,6 +374,12 @@ export class Relay extends EventEmitter {
         self.publishToKafka('user_connected', { usuario, socketId: socket.id });
       });
       
+      // EVENTO: unirse
+      socket.on('unirse', function(room, fn) {
+        socket.join(room);
+        if (typeof fn === 'function') fn(true);
+      });
+      
       // EVENTO: notificar
       socket.on('notificar', function(data) {
         if (self.metricsMessages) {
@@ -390,6 +398,11 @@ export class Relay extends EventEmitter {
             break;
           case 'nosotros':
             self.namespace.emit('notificar', data);
+            break;
+          case 'room':
+            if (data.room) {
+              self.namespace.to(data.room).emit('notificar', data);
+            }
             break;
           default: // "yo"
             socket.emit('notificar', data);
@@ -437,6 +450,11 @@ export class Relay extends EventEmitter {
             break;
           case 'nosotros':
             self.namespace.emit('relay', data);
+            break;
+          case 'room':
+            if (data.room) {
+              self.namespace.to(data.room).emit('relay', data);
+            }
             break;
           default: // "yo"
             socket.emit('relay', data);

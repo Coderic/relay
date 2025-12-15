@@ -8,8 +8,8 @@ Relay es un **gateway de comunicación en tiempo real** diseñado para ser **inm
 
 El gateway no cambia. Todos los proyectos usan la misma API:
 
-- **3 eventos**: `identificar`, `notificar`, `relay`
-- **3 destinos**: `yo`, `ustedes`, `nosotros`
+- **4 eventos**: `identificar`, `unirse`, `notificar`, `relay`
+- **4 destinos**: `yo`, `ustedes`, `nosotros`, `room`
 - **Sin configuración**: El gateway no necesita saber qué tipo de aplicación estás construyendo
 
 ### 🎯 Agnóstico
@@ -33,8 +33,20 @@ await relay.conectar();
 // 2. Identificar
 await relay.identificar('mi-usuario-123');
 
-// 3. Enviar y recibir
+// 3. Unirse a un room (v2.1)
+socket.emit('unirse', 'aulaA');
+
+// 4. Enviar y recibir
 relay.enviarATodos({ tipo: 'saludo', mensaje: 'Hola!' });
+
+// 5. Enviar a un room específico
+socket.emit('relay', {
+  destino: 'room',
+  room: 'aulaA',
+  tipo: 'mensaje',
+  texto: 'Hola aula A'
+});
+
 relay.on('relay', (data) => console.log(data));
 ```
 

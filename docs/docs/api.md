@@ -120,6 +120,7 @@ client.on('mensaje', (data) => {
 | Evento | Descripción | Payload |
 |--------|-------------|---------|
 | `identificar` | Identificar usuario | `(userId, callback)` |
+| `unirse` | Unirse a un room (v2.1) | `(room, callback)` |
 | `notificar` | Enviar notificación | `{ ...data, destino }` |
 | `relay` | Canal genérico | `{ ...data, destino }` |
 
@@ -139,6 +140,65 @@ client.on('mensaje', (data) => {
 | `yo` | Solo al emisor (default) |
 | `ustedes` | A todos menos el emisor |
 | `nosotros` | A todos incluyendo el emisor |
+| `room` | A todos en el room especificado (v2.1) |
+
+## Rooms (v2.1)
+
+Relay soporta rooms para segmentar usuarios en grupos específicos. Un room es simplemente un identificador de string que agrupa conexiones.
+
+### Unirse a un room
+
+```javascript
+socket.emit('unirse', 'aulaA', (ok) => {
+  console.log('Unido a aulaA:', ok);
+});
+```
+
+Puedes unirte a múltiples rooms:
+
+```javascript
+socket.emit('unirse', 'aulaA');
+socket.emit('unirse', 'Ingenieria');
+socket.emit('unirse', 'Directivos');
+```
+
+### Enviar a un room
+
+Usa `destino: 'room'` y especifica el `room`:
+
+```javascript
+socket.emit('relay', {
+  destino: 'room',
+  room: 'aulaA',
+  tipo: 'mensaje',
+  texto: 'Hola aula A'
+});
+```
+
+También funciona con `notificar`:
+
+```javascript
+socket.emit('notificar', {
+  destino: 'room',
+  room: 'Ingenieria',
+  tipo: 'aviso',
+  mensaje: 'Reunión en 5 minutos'
+});
+```
+
+### Casos de Uso
+
+- **Segmentación por departamento**: `'Ingenieria'`, `'Derecho'`, `'Directivos'`
+- **Aulas o grupos**: `'aulaA'`, `'aulaB'`, `'grupo1'`
+- **Proyectos**: `'proyecto-123'`, `'sprint-5'`
+- **Chats grupales**: `'chat-general'`, `'chat-soporte'`
+
+### Notas
+
+- Los rooms son temporales: se eliminan automáticamente cuando no hay usuarios
+- Un socket puede estar en múltiples rooms simultáneamente
+- Al desconectar, el socket sale automáticamente de todos los rooms
+- Los rooms funcionan con múltiples instancias gracias al Redis Adapter
 
 ## Servidor
 

@@ -98,6 +98,7 @@ socket.on('relay', (data) => {
 | Evento | Descripción | Payload |
 |--------|-------------|---------|
 | `identificar` | Identificar usuario | `(userId, callback)` |
+| `unirse` | Unirse a un room (v2.1) | `(room, callback)` |
 | `notificar` | Enviar notificación | `{ ...data, destino }` |
 | `relay` | Canal genérico | `{ ...data, destino }` |
 
@@ -108,6 +109,22 @@ socket.on('relay', (data) => {
 | `yo` | Solo al emisor (default) |
 | `ustedes` | A todos menos el emisor |
 | `nosotros` | A todos incluyendo el emisor |
+| `room` | A todos en el room especificado (v2.1) |
+
+### Ejemplo con Rooms
+
+```javascript
+// Unirse a un room
+socket.emit('unirse', 'aulaA');
+
+// Enviar a ese room
+socket.emit('relay', {
+  destino: 'room',
+  room: 'aulaA',
+  tipo: 'mensaje',
+  texto: 'Hola aula A'
+});
+```
 
 ## Configuración
 
