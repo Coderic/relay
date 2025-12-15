@@ -7,7 +7,7 @@
 Clase helper para facilitar el uso de Relay en el navegador.
 
 ```javascript
-const relay = new RelayConector('http://demo.relay.coderic.net');
+const relay = new RelayConector('wss://demo.relay.coderic.net');
 ```
 
 #### Métodos
@@ -71,7 +71,7 @@ relay.on('notificar', (data) => {
 Si prefieres usar Socket.io directamente:
 
 ```javascript
-const socket = io('http://demo.relay.coderic.net/relay');
+const socket = io('wss://demo.relay.coderic.net/relay');
 
 // Identificar
 socket.emit('identificar', 'mi-usuario', (ok) => {
@@ -98,7 +98,7 @@ socket.on('relay', (data) => {
 ```javascript
 import { RelayClient } from '@coderic/relay';
 
-const client = new RelayClient('http://demo.relay.coderic.net');
+const client = new RelayClient('wss://demo.relay.coderic.net');
 await client.connect();
 
 // Identificarse

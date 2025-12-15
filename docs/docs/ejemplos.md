@@ -27,7 +27,7 @@ Sistema de pedidos de pizza con tracking en tiempo real. Demuestra cómo sincron
 
 ```javascript
 // Conectar a Relay
-const relay = new RelayConector('http://demo.relay.coderic.net');
+const relay = new RelayConector('wss://demo.relay.coderic.net');
 await relay.conectar();
 
 // Enviar nuevo pedido (cliente)
@@ -83,7 +83,7 @@ Colección de 4 ejemplos de chat demostrando todas las capacidades de Relay v2.2
 
 ```javascript
 // Conectar a Relay
-const relay = new RelayConector('http://demo.relay.coderic.net');
+const relay = new RelayConector('wss://demo.relay.coderic.net');
 await relay.conectar();
 
 // Identificarse
@@ -123,7 +123,7 @@ Sistema de reserva de eventos con disponibilidad en tiempo real. Demuestra cómo
 
 ```javascript
 // Conectar a Relay
-const relay = new RelayConector('http://demo.relay.coderic.net');
+const relay = new RelayConector('wss://demo.relay.coderic.net');
 await relay.conectar();
 
 // Seleccionar asiento
@@ -235,7 +235,7 @@ Sistema de cola tipo banco con múltiples operadores
 2. Conecta y usa:
 
 ```javascript
-const relay = new RelayConector('http://demo.relay.coderic.net');
+const relay = new RelayConector('wss://demo.relay.coderic.net');
 await relay.conectar();
 await relay.identificar('mi-id');
 

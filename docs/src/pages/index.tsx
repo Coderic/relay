@@ -98,7 +98,7 @@ export default function Home(): JSX.Element {
               <div className="col col--6">
                 <h2>Ejemplo Rápido</h2>
                 <pre style={{background: '#1e1e1e', padding: '1rem', borderRadius: '8px', color: '#d4d4d4'}}>
-{`const socket = io('http://demo.relay.coderic.net/relay');
+{`const socket = io('wss://demo.relay.coderic.net/relay');
 
 socket.emit('identificar', 'mi-usuario');
 

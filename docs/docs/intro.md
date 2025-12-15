@@ -27,7 +27,7 @@ El identificador puede ser **cualquier cosa** que tenga sentido para tu aplicaci
 
 ```javascript
 // 1. Conectar
-const relay = new RelayConector('http://demo.relay.coderic.net');
+const relay = new RelayConector('wss://demo.relay.coderic.net');
 await relay.conectar();
 
 // 2. Identificar
