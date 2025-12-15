@@ -21,4 +21,6 @@ jobs:
       - run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # Nota: NPM_TOKEN debe ser un token de tipo "Automation" de npm
+          # que no requiera 2FA. Crear en: https://www.npmjs.com/settings/[org]/-/tokens
 
