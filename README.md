@@ -181,12 +181,21 @@ CMD ["node", "src/server.js"]
 
 ## Ejemplos
 
-- [Chat en tiempo real](https://github.com/Coderic/chat)
-- [Pizza Delivery](https://github.com/Coderic/pizza-delivery)
-- [Booking de Eventos](https://github.com/Coderic/booking-eventos)
-- [Bus Express](https://github.com/Coderic/relay-ejemplo-bus) (React)
-- [SkyBooker](https://github.com/Coderic/relay-ejemplo-aerolinea) (Angular)
-- [PasaPay](https://github.com/Coderic/relay-ejemplo-pagos) (Vue.js)
+### Básicos
+- [Chat en tiempo real](https://github.com/Coderic/chat) - Chat multi-usuario
+- [Pizza Delivery](https://github.com/Coderic/pizza-delivery) - Tracking de pedidos
+- [Booking de Eventos](https://github.com/Coderic/booking-eventos) - Reserva de eventos
+
+### Reservas y Booking
+- [Bus Express](https://github.com/Coderic/bus) - Reserva de autobuses (React)
+- [SkyBooker](https://github.com/Coderic/aerolinea) - Reserva de vuelos (Angular)
+- [Hotel Booking](https://github.com/Coderic/hotel) - Reserva de hoteles (Vue.js)
+- [Cine](https://github.com/Coderic/cine) - Reserva de asientos de cine (Svelte)
+
+### Otros Casos de Uso
+- [PasaPay](https://github.com/Coderic/pagos) - Pagos P2P estilo Nequi (Vue.js)
+- [Subastas](https://github.com/Coderic/subastas) - Sistema de subastas en tiempo real (React)
+- [Cola de Turnos](https://github.com/Coderic/cola-turnos) - Sistema de cola tipo banco
 
 ## Website
 

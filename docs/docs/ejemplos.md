@@ -153,11 +153,16 @@ El monitor te permite ver:
 
 Relay tiene más ejemplos disponibles en GitHub:
 
-- [Bus Express](https://github.com/Coderic/relay-ejemplo-bus) - React + Relay
-- [SkyBooker](https://github.com/Coderic/relay-ejemplo-aerolinea) - Angular + Relay
-- [PasaPay](https://github.com/Coderic/relay-ejemplo-pagos) - Vue.js + Relay
-- [Hotel Booking](https://github.com/Coderic/relay-ejemplo-hotel) - Reservas de hotel
-- [Cine](https://github.com/Coderic/relay-ejemplo-cine) - Reserva de asientos de cine
+### Reservas y Booking
+- [Bus Express](https://github.com/Coderic/bus) - Reserva de autobuses con React
+- [SkyBooker](https://github.com/Coderic/aerolinea) - Reserva de vuelos con Angular
+- [Hotel Booking](https://github.com/Coderic/hotel) - Reserva de hoteles con Vue.js
+- [Cine](https://github.com/Coderic/cine) - Reserva de asientos de cine con Svelte
+
+### Otros Casos de Uso
+- [PasaPay](https://github.com/Coderic/pagos) - Pagos P2P estilo Nequi con Vue.js
+- [Subastas](https://github.com/Coderic/subastas) - Sistema de subastas en tiempo real con React
+- [Cola de Turnos](https://github.com/Coderic/cola-turnos) - Sistema de cola tipo banco con múltiples operadores
 
 ## Crear tu Propio Ejemplo
 
