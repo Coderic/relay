@@ -19,6 +19,15 @@ const sidebars = {
     'api',
     'ejemplos',
     'arquitectura',
+    {
+      type: 'category',
+      label: 'Plugins',
+      items: [
+        'plugins',
+        'plugins-mongo',
+        'plugins-webrtc',
+      ],
+    },
   ],
 };
 
