@@ -66,6 +66,12 @@ services:
       - KAFKA_BROKERS=kafka:9092
       # Opcional: Desactivar plugin WebRTC
       # - WEBRTC_ENABLED=false
+      # Opcional: Configurar servidores STUN
+      # - STUN_SERVERS=stun:stun.l.google.com:19302,stun:stun1.l.google.com:19302
+      # Opcional: Configurar servidor TURN
+      # - TURN_URL=turn:turn.tudominio.com:3478
+      # - TURN_USERNAME=usuario
+      # - TURN_CREDENTIAL=password
     depends_on:
       - redis
       - kafka
@@ -80,6 +86,10 @@ services:
 | `PORT` | Puerto del servidor | `5000` |
 | `REDIS_URL` | URL de Redis | - |
 | `WEBRTC_ENABLED` | Habilitar plugin WebRTC | `true` |
+| `STUN_SERVERS` | Servidores STUN (separados por comas o JSON array) | Servidores de Google por defecto |
+| `TURN_URL` | URL del servidor TURN (opcional) | - |
+| `TURN_USERNAME` | Usuario para TURN (opcional) | - |
+| `TURN_CREDENTIAL` | Credencial para TURN (opcional) | - |
 | `KAFKA_BROKERS` | Brokers Kafka (comma-separated) | - |
 | `INSTANCE_ID` | ID de instancia | `process.pid` |
 | `MONGODB_URL` | URL de MongoDB (opcional) | - |

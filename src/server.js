@@ -88,7 +88,35 @@ const config = {
       }
     } : null,
     // Plugin WebRTC (habilitado por defecto, desactivar con WEBRTC_ENABLED=false)
-    webrtc: process.env.WEBRTC_ENABLED === 'false' ? false : undefined
+    webrtc: process.env.WEBRTC_ENABLED === 'false' ? false : (() => {
+      const config = {};
+      
+      // Configurar STUN servers si están definidos
+      if (process.env.STUN_SERVERS) {
+        try {
+          // Puede ser JSON array o lista separada por comas
+          const stunList = process.env.STUN_SERVERS.includes('[') 
+            ? JSON.parse(process.env.STUN_SERVERS)
+            : process.env.STUN_SERVERS.split(',').map(s => s.trim());
+          
+          config.stun = stunList.map(url => ({ urls: url }));
+        } catch (e) {
+          console.warn('[Relay] Error al parsear STUN_SERVERS, usando defaults');
+        }
+      }
+      
+      // Configurar TURN server si está definido
+      if (process.env.TURN_URL) {
+        config.turn = {
+          url: process.env.TURN_URL,
+          username: process.env.TURN_USERNAME || undefined,
+          credential: process.env.TURN_CREDENTIAL || undefined
+        };
+      }
+      
+      // Si hay configuración, retornarla, sino undefined (usa defaults)
+      return Object.keys(config).length > 0 ? config : undefined;
+    })()
   },
   httpHandler: existsSync(PUBLIC_DIR) ? staticHandler : null
 };

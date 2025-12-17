@@ -19,6 +19,71 @@ export class WebRTCPlugin extends RelayPlugin {
     this.peers = new Map(); // socketId -> { roomId, peerId }
     this.peerIdToSocketId = new Map(); // peerId -> socketId (mapa inverso)
     this.namespace = null; // Guardar referencia al namespace
+    
+    // Configuración de ICE servers (STUN/TURN)
+    this.iceServers = this.buildIceServers(options);
+  }
+
+  /**
+   * Construye la configuración de ICE servers desde las opciones
+   * @param {Object} options - Opciones del plugin
+   * @returns {Array} Array de servidores ICE
+   */
+  buildIceServers(options) {
+    // Si se proporcionan iceServers personalizados, usarlos directamente
+    if (options.iceServers && Array.isArray(options.iceServers)) {
+      return options.iceServers;
+    }
+    
+    const iceServers = [];
+    
+    // STUN servers por defecto (configurables)
+    const defaultStunServers = options.stun || [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' }
+    ];
+    
+    // Agregar servidores STUN
+    if (Array.isArray(defaultStunServers)) {
+      defaultStunServers.forEach(server => {
+        if (typeof server === 'string') {
+          // Si es un string, convertirlo a objeto
+          iceServers.push({ urls: server });
+        } else if (server && server.urls) {
+          // Si es un objeto, agregarlo directamente
+          iceServers.push(server);
+        }
+      });
+    }
+    
+    // TURN server si está configurado
+    if (options.turn) {
+      const turnConfig = {
+        urls: options.turn.url || options.turn.urls
+      };
+      
+      if (options.turn.username) {
+        turnConfig.username = options.turn.username;
+      }
+      
+      if (options.turn.credential) {
+        turnConfig.credential = options.turn.credential;
+      }
+      
+      if (turnConfig.urls) {
+        iceServers.push(turnConfig);
+      }
+    }
+    
+    return iceServers;
+  }
+
+  /**
+   * Obtiene la configuración de ICE servers
+   * @returns {Array} Array de servidores ICE
+   */
+  getIceServers() {
+    return this.iceServers;
   }
 
   /**
@@ -39,6 +104,13 @@ export class WebRTCPlugin extends RelayPlugin {
     this.namespace = namespace; // Guardar referencia al namespace
     
     namespace.on('connection', (socket) => {
+      // Endpoint para obtener configuración de ICE servers
+      socket.on('webrtc:get-ice-servers', (callback) => {
+        if (typeof callback === 'function') {
+          callback({ iceServers: this.getIceServers() });
+        }
+      });
+      
       // Escuchar mensajes de tipo webrtc:* en el evento relay
       socket.on('relay', (data) => {
         if (!data.tipo || !data.tipo.startsWith('webrtc:')) return;

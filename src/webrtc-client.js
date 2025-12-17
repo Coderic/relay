@@ -19,23 +19,76 @@ export class WebRTCManager {
   /**
    * @param {Socket} socket - Socket.io socket conectado a Relay
    * @param {Object} config - Configuración WebRTC
-   * @param {Array} config.iceServers - Servidores STUN/TURN
+   * @param {Array} config.iceServers - Servidores STUN/TURN (opcional, se obtiene del servidor si no se proporciona)
+   * @param {boolean} config.useServerConfig - Si es true, obtiene la configuración del servidor (default: true)
    */
   constructor(socket, config = {}) {
     this.socket = socket;
     this.config = {
-      iceServers: config.iceServers || [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' }
-      ],
+      useServerConfig: config.useServerConfig !== false, // Por defecto intenta obtener del servidor
+      iceServers: config.iceServers || null, // Se obtendrá del servidor si es null
       ...config
     };
     this.peers = new Map(); // peerId -> RTCPeerConnection
     this.localStream = null;
     this.roomId = null;
     this.peerId = null;
+    this.iceServersReady = false;
     
     this.setupSocketHandlers();
+    this.initializeIceServers();
+  }
+
+  /**
+   * Inicializa los servidores ICE desde el servidor o usa los proporcionados
+   * @private
+   */
+  async initializeIceServers() {
+    // Si se proporcionaron iceServers explícitamente, usarlos
+    if (this.config.iceServers) {
+      this.config.iceServers = this.config.iceServers;
+      this.iceServersReady = true;
+      return;
+    }
+
+    // Si useServerConfig es false, usar defaults
+    if (!this.config.useServerConfig) {
+      this.config.iceServers = [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ];
+      this.iceServersReady = true;
+      return;
+    }
+
+    // Intentar obtener configuración del servidor
+    try {
+      const response = await new Promise((resolve, reject) => {
+        this.socket.emit('webrtc:get-ice-servers', (data) => {
+          if (data && data.iceServers) {
+            resolve(data.iceServers);
+          } else {
+            reject(new Error('No se recibió configuración de ICE servers'));
+          }
+        });
+        
+        // Timeout después de 2 segundos
+        setTimeout(() => {
+          reject(new Error('Timeout al obtener configuración de ICE servers'));
+        }, 2000);
+      });
+
+      this.config.iceServers = response;
+      this.iceServersReady = true;
+    } catch (error) {
+      // Si falla, usar defaults
+      console.warn('[WebRTCManager] No se pudo obtener configuración del servidor, usando defaults:', error.message);
+      this.config.iceServers = [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ];
+      this.iceServersReady = true;
+    }
   }
 
   /**
@@ -74,25 +127,25 @@ export class WebRTCManager {
    * Maneja la confirmación de unión al room
    * @param {Object} data - Datos del mensaje
    */
-  handleJoined(data) {
+  async handleJoined(data) {
     const { roomId, peers } = data;
     this.roomId = roomId;
     
     // Crear conexiones con peers existentes
-    peers.forEach(peerId => {
-      this.createPeerConnection(peerId, true);
-    });
+    for (const peerId of peers) {
+      await this.createPeerConnection(peerId, true);
+    }
   }
 
   /**
    * Maneja cuando un nuevo peer se une
    * @param {Object} data - Datos del mensaje
    */
-  handlePeerJoined(data) {
+  async handlePeerJoined(data) {
     const { peerId, socketId } = data;
     // Solo crear conexión si no existe y si es para nosotros
     if (!this.peers.has(socketId)) {
-      this.createPeerConnection(socketId, false);
+      await this.createPeerConnection(socketId, false);
     }
   }
 
@@ -108,7 +161,7 @@ export class WebRTCManager {
     
     let pc = this.peers.get(from);
     if (!pc) {
-      pc = this.createPeerConnection(from, false);
+      pc = await this.createPeerConnection(from, false);
     }
 
     await pc.setRemoteDescription(new RTCSessionDescription(offer));
@@ -172,8 +225,13 @@ export class WebRTCManager {
    * @param {boolean} createOffer - Si debe crear la oferta
    * @returns {RTCPeerConnection}
    */
-  createPeerConnection(peerId, createOffer) {
-    const pc = new RTCPeerConnection(this.config);
+  async createPeerConnection(peerId, createOffer) {
+    // Esperar a que los ICE servers estén listos si aún no lo están
+    if (!this.iceServersReady) {
+      await this.initializeIceServers();
+    }
+
+    const pc = new RTCPeerConnection({ iceServers: this.config.iceServers });
 
     // Agregar tracks locales si existen
     if (this.localStream) {

@@ -32,6 +32,114 @@ const gateway = createRelay({
 });
 ```
 
+## Configuración de STUN/TURN Servers
+
+El plugin WebRTC puede configurarse para usar servidores STUN y TURN personalizados. Por defecto, usa servidores STUN públicos de Google.
+
+### Variables de Entorno
+
+#### STUN Servers
+
+```bash
+# Lista de servidores STUN separados por comas
+STUN_SERVERS=stun:stun.l.google.com:19302,stun:stun1.l.google.com:19302
+
+# O como array JSON
+STUN_SERVERS=["stun:stun.l.google.com:19302","stun:stun1.l.google.com:19302"]
+```
+
+#### TURN Server
+
+```bash
+# URL del servidor TURN (requerido para habilitar TURN)
+TURN_URL=turn:turn.tudominio.com:3478
+
+# Credenciales (opcional, dependiendo de la configuración de coturn)
+TURN_USERNAME=usuario
+TURN_CREDENTIAL=password
+```
+
+### Configuración Programática
+
+#### Solo STUN personalizado
+
+```javascript
+const gateway = createRelay({
+  plugins: {
+    webrtc: {
+      stun: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]
+    }
+  }
+});
+```
+
+#### STUN + TURN
+
+```javascript
+const gateway = createRelay({
+  plugins: {
+    webrtc: {
+      stun: [
+        { urls: 'stun:stun.l.google.com:19302' }
+      ],
+      turn: {
+        url: 'turn:turn.tudominio.com:3478',
+        username: 'usuario',      // Opcional
+        credential: 'password'    // Opcional
+      }
+    }
+  }
+});
+```
+
+#### Configuración Completa Personalizada
+
+Si necesitas control total sobre los servidores ICE:
+
+```javascript
+const gateway = createRelay({
+  plugins: {
+    webrtc: {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        {
+          urls: 'turn:turn.tudominio.com:3478',
+          username: 'usuario',
+          credential: 'password'
+        }
+      ]
+    }
+  }
+});
+```
+
+**Nota**: Si proporcionas `iceServers`, se ignoran las opciones `stun` y `turn`.
+
+### Obtención Automática de Configuración
+
+Los clientes WebRTC obtienen automáticamente la configuración de ICE servers del servidor. No necesitas configurarlos manualmente en el cliente:
+
+```javascript
+// El cliente obtiene automáticamente la configuración del servidor
+const webrtc = new WebRTCManager(socket);
+// Los ICE servers se obtienen del servidor automáticamente
+```
+
+Si necesitas usar una configuración personalizada en el cliente (por ejemplo, para desarrollo local):
+
+```javascript
+const webrtc = new WebRTCManager(socket, {
+  useServerConfig: false,  // No usar configuración del servidor
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' }
+  ]
+});
+```
+
 ## Uso en el Frontend
 
 ### Instalación
