@@ -8,7 +8,7 @@ Sistema de pedidos de pizza con tracking en tiempo real. Demuestra cómo sincron
 
 - 📦 [Repositorio](https://github.com/Coderic/pizza-delivery)
 - 🐛 [Issues](https://github.com/Coderic/pizza-delivery/issues)
-- 🌐 [Demo en línea](https://coderic.org/pizza-delivery/)
+- 🌐 [Demo en línea](https://oss.coderic.org/pizza-delivery/)
 
 **Características**:
 - Vista Cliente: Selecciona pizzas y realiza pedidos
@@ -61,7 +61,7 @@ Colección de 4 ejemplos de chat demostrando todas las capacidades de Relay v2.2
 
 - 📦 [Repositorio](https://github.com/Coderic/chat)
 - 🐛 [Issues](https://github.com/Coderic/chat/issues)
-- 🌐 [Demo en línea](https://coderic.org/chat/)
+- 🌐 [Demo en línea](https://oss.coderic.org/chat/)
 
 **Ejemplos incluidos:**
 
@@ -111,7 +111,7 @@ Sistema de reserva de eventos con disponibilidad en tiempo real. Demuestra cómo
 
 - 📦 [Repositorio](https://github.com/Coderic/booking-eventos)
 - 🐛 [Issues](https://github.com/Coderic/booking-eventos/issues)
-- 🌐 [Demo en línea](https://coderic.org/booking-eventos/)
+- 🌐 [Demo en línea](https://oss.coderic.org/booking-eventos/)
 
 **Características**:
 - Selección de asientos/lugares
@@ -177,28 +177,28 @@ Reserva de autobuses con React
 
 - 📦 [Repositorio](https://github.com/Coderic/bus)
 - 🐛 [Issues](https://github.com/Coderic/bus/issues)
-- 🌐 [Demo en línea](https://coderic.org/bus/)
+- 🌐 [Demo en línea](https://oss.coderic.org/bus/)
 
 #### ✈️ SkyBooker
 Reserva de vuelos con Angular
 
 - 📦 [Repositorio](https://github.com/Coderic/aerolinea)
 - 🐛 [Issues](https://github.com/Coderic/aerolinea/issues)
-- 🌐 [Demo en línea](https://coderic.org/aerolinea/)
+- 🌐 [Demo en línea](https://oss.coderic.org/aerolinea/)
 
 #### 🏨 Hotel Booking
 Reserva de hoteles con Vue.js
 
 - 📦 [Repositorio](https://github.com/Coderic/hotel)
 - 🐛 [Issues](https://github.com/Coderic/hotel/issues)
-- 🌐 [Demo en línea](https://coderic.org/hotel/)
+- 🌐 [Demo en línea](https://oss.coderic.org/hotel/)
 
 #### 🎬 Cine
 Reserva de asientos de cine con Svelte
 
 - 📦 [Repositorio](https://github.com/Coderic/cine)
 - 🐛 [Issues](https://github.com/Coderic/cine/issues)
-- 🌐 [Demo en línea](https://coderic.org/cine/)
+- 🌐 [Demo en línea](https://oss.coderic.org/cine/)
 
 ### Otros Casos de Uso
 
@@ -207,21 +207,21 @@ Pagos P2P estilo Nequi con Vue.js
 
 - 📦 [Repositorio](https://github.com/Coderic/pagos)
 - 🐛 [Issues](https://github.com/Coderic/pagos/issues)
-- 🌐 [Demo en línea](https://coderic.org/pagos/)
+- 🌐 [Demo en línea](https://oss.coderic.org/pagos/)
 
 #### 🔨 Subastas
 Sistema de subastas en tiempo real con React
 
 - 📦 [Repositorio](https://github.com/Coderic/subastas)
 - 🐛 [Issues](https://github.com/Coderic/subastas/issues)
-- 🌐 [Demo en línea](https://coderic.org/subastas/)
+- 🌐 [Demo en línea](https://oss.coderic.org/subastas/)
 
 #### 🏦 Cola de Turnos
 Sistema de cola tipo banco con múltiples operadores
 
 - 📦 [Repositorio](https://github.com/Coderic/cola-turnos)
 - 🐛 [Issues](https://github.com/Coderic/cola-turnos/issues)
-- 🌐 [Demo en línea](https://coderic.org/cola-turnos/)
+- 🌐 [Demo en línea](https://oss.coderic.org/cola-turnos/)
 
 ## Crear tu Propio Ejemplo
 
